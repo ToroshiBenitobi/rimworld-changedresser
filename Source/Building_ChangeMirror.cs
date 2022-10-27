@@ -32,6 +32,11 @@ namespace ChangeDresser
                 }
                 yield return CurrentEditorEnum.ChangeDresserBody;
             }
+            
+            if (isAlien)
+            {
+                yield return CurrentEditorEnum.ChangeDresserAlienHairColor;
+            }
         }
 
         [DebuggerHidden]

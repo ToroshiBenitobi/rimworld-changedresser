@@ -62,7 +62,7 @@ namespace ChangeDresser.UI.DTO.SelectionWidgetDTOs
                         def.styleGender == StyleGender.Any)
                     {
                         this.femaleHairDefs.Add(def);
-                    } //todo:hair
+                    }
                 }
             }
 

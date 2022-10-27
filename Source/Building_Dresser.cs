@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using SaveStorageSettingsUtil;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -104,6 +103,11 @@ namespace ChangeDresser
                     yield return CurrentEditorEnum.ChangeDresserAlienSkinColor;
                 }
                 yield return CurrentEditorEnum.ChangeDresserBody;
+            }
+            
+            if (isAlien)
+            {
+                yield return CurrentEditorEnum.ChangeDresserAlienHairColor;
             }
         }
 
@@ -809,7 +813,8 @@ namespace ChangeDresser
              ++groupKey;
              l.Add(a);
 
-             return SaveStorageSettingsGizmoUtil.AddSaveLoadGizmos(l, SaveTypeEnum.Apparel_Management, this.settings.filter);
+             // return SaveStorageSettingsGizmoUtil.AddSaveLoadGizmos(l, SaveTypeEnum.Apparel_Management, this.settings.filter);
+             return l;
          }
 #endregion
 

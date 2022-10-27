@@ -315,6 +315,13 @@ namespace ChangeDresser
                                 Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserHair)));
                             }));
                         }
+                        if (isAlien && AlienRaceUtil.HasHair(__instance))
+                        {
+                            options.Add(new FloatMenuOption("ChangeDresser.ChangeAlienHairColor".Translate(), delegate ()
+                            {
+                                Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserAlienHairColor)));
+                            }));
+                        }
                         if (Settings.ShowBodyChange)
                         {
                             options.Add(new FloatMenuOption("ChangeDresser.ChangeBody".Translate(), delegate ()

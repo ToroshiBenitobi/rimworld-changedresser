@@ -11,7 +11,8 @@ namespace ChangeDresser
     public enum ColorPresetType
     {
         Apparel,
-        Hair
+        Hair,
+        Skin
     };
 
     static class IOUtil

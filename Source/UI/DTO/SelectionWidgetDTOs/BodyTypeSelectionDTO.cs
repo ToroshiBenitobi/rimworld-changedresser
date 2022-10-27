@@ -48,14 +48,18 @@ namespace ChangeDresser.UI.DTO.SelectionWidgetDTOs
                 BodyTypeDefOf.Male,
                 BodyTypeDefOf.Thin,
                 BodyTypeDefOf.Hulk,
-                BodyTypeDefOf.Fat
+                BodyTypeDefOf.Fat,
+                // BodyTypeDefOf.Baby,
+                // BodyTypeDefOf.Child
             };
             this.femaleBodyTypes = new List<BodyTypeDef>()
             {
                 BodyTypeDefOf.Female,
                 BodyTypeDefOf.Thin,
                 BodyTypeDefOf.Hulk,
-                BodyTypeDefOf.Fat
+                BodyTypeDefOf.Fat,
+                // BodyTypeDefOf.Baby,
+                // BodyTypeDefOf.Child
             };
             this.ChildBodyTypes = new List<BodyTypeDef>()
             {
@@ -65,19 +69,20 @@ namespace ChangeDresser.UI.DTO.SelectionWidgetDTOs
             {
                 BodyTypeDefOf.Baby
             };
-            Log.Message(lifeStage.ToString());
-            if (lifeStage == LifeStageDefOf.HumanlikeBaby)
-            {
-                this.bodyTypes = this.babyBodyTypes;
-            }
-            else if (lifeStage == LifeStageDefOf.HumanlikeChild)
-            {
-                this.bodyTypes = this.ChildBodyTypes;
-            }
-            else
-            {
-                this.bodyTypes = (gender == Gender.Male) ? this.maleBodyTypes : this.femaleBodyTypes;
-            }
+            // Log.Message(lifeStage.ToString());
+            this.bodyTypes = (gender == Gender.Male) ? this.maleBodyTypes : this.femaleBodyTypes;
+            // if (lifeStage.ToString().Equals(LifeStageDefOf.HumanlikeBaby.ToString()))
+            // {
+            //     this.bodyTypes = this.babyBodyTypes;
+            // }
+            // else if (lifeStage.ToString().Equals(LifeStageDefOf.HumanlikeChild.ToString()))
+            // {
+            //     this.bodyTypes = this.ChildBodyTypes;
+            // }
+            // else
+            // {
+            //     
+            // }
 
             this.FindIndex(bodyType);
         }
@@ -118,23 +123,23 @@ namespace ChangeDresser.UI.DTO.SelectionWidgetDTOs
         {
             set
             {
-                BodyTypeDef bodyType = (BodyTypeDef)this.SelectedItem;
-
-                if (value == LifeStageDefOf.HumanlikeBaby)
-                {
-                    this.bodyTypes = this.babyBodyTypes;
-                }
-                else if (value == LifeStageDefOf.HumanlikeChild)
-                {
-                    this.bodyTypes = this.ChildBodyTypes;
-                }
-                else
-                {
-                    this.bodyTypes = (this.Gender == Gender.Male) ? this.maleBodyTypes : this.femaleBodyTypes;
-                }
-                
-                this.FindIndex(bodyType);
-                base.IndexChanged();
+                // BodyTypeDef bodyType = (BodyTypeDef)this.SelectedItem;
+                //
+                // if (value.ToString().Equals(LifeStageDefOf.HumanlikeBaby.ToString()))
+                // {
+                //     this.bodyTypes = this.babyBodyTypes;
+                // }
+                // else if (value.ToString().Equals(LifeStageDefOf.HumanlikeChild.ToString()))
+                // {
+                //     this.bodyTypes = this.ChildBodyTypes;
+                // }
+                // else
+                // {
+                //     this.bodyTypes = (this.Gender == Gender.Male) ? this.maleBodyTypes : this.femaleBodyTypes;
+                // }
+                //
+                // this.FindIndex(bodyType);
+                // base.IndexChanged();
             }
         }
 

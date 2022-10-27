@@ -23,6 +23,7 @@ namespace ChangeDresser.DresserJobDriver
                 initAction = delegate
                 {
                     Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(this.GetActor(), base.job, CurrentEditorEnum.ChangeDresserAlienSkinColor)));
+                    Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(this.GetActor(), base.job, CurrentEditorEnum.ChangeDresserAlienHairColor)));
                 }
             };
             yield break;

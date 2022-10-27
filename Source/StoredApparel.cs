@@ -10,7 +10,9 @@ namespace ChangeDresser
 {
     public class StoredApparel
     {
-        internal Dictionary<ThingDef, LinkedList<Apparel>> StoredApparelLookup = new Dictionary<ThingDef, LinkedList<Apparel>>();
+        internal Dictionary<ThingDef, LinkedList<Apparel>> StoredApparelLookup =
+            new Dictionary<ThingDef, LinkedList<Apparel>>();
+
         public int Count
         {
             get
@@ -20,6 +22,7 @@ namespace ChangeDresser
                 {
                     count += ll.Count;
                 }
+
                 return count;
             }
         }
@@ -36,6 +39,7 @@ namespace ChangeDresser
                         l.Add(a);
                     }
                 }
+
                 return l;
             }
         }
@@ -49,6 +53,7 @@ namespace ChangeDresser
                     l = new LinkedList<Apparel>();
                     this.StoredApparelLookup.Add(apparel.def, l);
                 }
+
                 this.AddApparelToLinkedList(apparel, l);
             }
             else
@@ -67,7 +72,14 @@ namespace ChangeDresser
             }
 
 #endif
-            Pawn pawn = PawnGenerator.GeneratePawn(PawnKindDefOf.Pirate);
+            // Pawn pawn = PawnGenerator.GeneratePawn(PawnKindDefOf.Pirate);
+            Pawn pawn = null;
+            List<Pawn> pawns = PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_OfPlayerFaction;
+            if (pawns != null && pawns.Count > 0)
+                pawn = pawns[0];
+            else
+                pawn = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist);
+
             float score = JobGiver_OptimizeApparel.ApparelScoreRaw(pawn, apparel);
             for (LinkedListNode<Apparel> n = l.First; n != null; n = n.Next)
             {
@@ -83,6 +95,7 @@ namespace ChangeDresser
                     return;
                 }
             }
+
             l.AddLast(apparel);
 
             /*
@@ -130,7 +143,8 @@ namespace ChangeDresser
             */
         }
 
-        internal int GetApparelCount(ThingDef expectedDef, QualityRange qualityRange, FloatRange hpRange, ThingFilter filter)
+        internal int GetApparelCount(ThingDef expectedDef, QualityRange qualityRange, FloatRange hpRange,
+            ThingFilter filter)
         {
             LinkedList<Apparel> l;
             if (this.StoredApparelLookup.TryGetValue(expectedDef, out l))
@@ -143,12 +157,15 @@ namespace ChangeDresser
                         ++count;
                     }
                 }
+
                 return count;
             }
+
             return 0;
         }
 
-        private bool Allows(Thing t, ThingDef expectedDef, QualityRange qualityRange, FloatRange hpRange, ThingFilter filter)
+        private bool Allows(Thing t, ThingDef expectedDef, QualityRange qualityRange, FloatRange hpRange,
+            ThingFilter filter)
         {
 #if DEBUG || DEBUG_DO_UNTIL_X
             Log.Warning("StoredApparel.Allows Begin [" + t.Label + "]");
@@ -164,7 +181,7 @@ namespace ChangeDresser
             Log.Message("    def uses HP: " + expectedDef.useHitPoints + " filter: " + hpRange.min + " " + hpRange.max);
 #endif
             if (expectedDef.useHitPoints &&
-                hpRange != null && 
+                hpRange != null &&
                 hpRange.min != 0f && hpRange.max != 100f)
             {
                 float num = (float)t.HitPoints / (float)t.MaxHitPoints;
@@ -187,6 +204,7 @@ namespace ChangeDresser
                 {
                     p = QualityCategory.Normal;
                 }
+
                 if (!qualityRange.Includes(p))
                 {
 #if DEBUG || DEBUG_DO_UNTIL_X
@@ -216,6 +234,7 @@ namespace ChangeDresser
             {
                 return l.Contains(apparel);
             }
+
             return false;
         }
 
@@ -225,6 +244,7 @@ namespace ChangeDresser
             {
                 l.Clear();
             }
+
             this.StoredApparelLookup.Clear();
         }
 
@@ -240,6 +260,7 @@ namespace ChangeDresser
                     return true;
                 }
             }
+
             apparel = null;
             return false;
         }
@@ -256,6 +277,7 @@ namespace ChangeDresser
                     return true;
                 }
             }
+
             apparel = null;
             return false;
         }
@@ -267,6 +289,7 @@ namespace ChangeDresser
             {
                 return l.Remove(apparel);
             }
+
             return false;
         }
 
@@ -311,6 +334,7 @@ namespace ChangeDresser
                     }
                 }
             }
+
             apparel = null;
 #if DEBUG
             Log.Message("End StoredApparel.TryRemoveBestApperal Return: False" + Environment.NewLine);
@@ -332,13 +356,16 @@ namespace ChangeDresser
                         ll.Remove(n);
                         removed.Add(n.Value);
                     }
+
                     n = n.Next;
                 }
             }
+
             return removed;
         }
 
-        public bool FindBetterApparel(ref float baseApparelScore, ref Apparel betterApparel, Pawn pawn, Outfit currentOutfit, Building dresser)
+        public bool FindBetterApparel(ref float baseApparelScore, ref Apparel betterApparel, Pawn pawn,
+            Outfit currentOutfit, Building dresser)
         {
 #if BETTER_OUTFIT
             Log.Warning("Begin StoredApparel.FindBetterApparel");
@@ -360,7 +387,8 @@ namespace ChangeDresser
                 else
                     Log.Message("        <null> list");
 #endif
-                if (ApparelUtil.FindBetterApparel(ref baseApparelScore, ref betterApparel, pawn, currentOutfit, ll, dresser))
+                if (ApparelUtil.FindBetterApparel(ref baseApparelScore, ref betterApparel, pawn, currentOutfit, ll,
+                        dresser))
                 {
                     result = true;
                 }

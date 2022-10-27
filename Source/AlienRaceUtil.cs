@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AlienRace;
 using Verse;
 
 namespace ChangeDresser
@@ -12,6 +13,7 @@ namespace ChangeDresser
         private static List<ThingDef> alienRaces = new List<ThingDef>(0);
 
         #region Get Field/Metho Info
+
         private static FieldInfo raceSettingsFieldInfo = null;
         private static FieldInfo hairSettingsFieldInfo = null;
         private static FieldInfo generalSettingsFieldInfo = null;
@@ -25,11 +27,13 @@ namespace ChangeDresser
                 Log.Warning("raceSettingsFieldInfo found: " + (string)((raceSettingsFieldInfo != null) ? "True" : "False"));
 #endif
             }
+
             if (raceSettingsFieldInfo == null)
             {
                 Log.ErrorOnce("Unable to get raceSettingsFieldInfo", "raceSettingsFieldInfo".GetHashCode());
                 return null;
             }
+
             return raceSettingsFieldInfo.GetValue(pawn.def);
         }
 
@@ -40,35 +44,44 @@ namespace ChangeDresser
             {
                 return null;
             }
+
             if (hairSettingsFieldInfo == null)
             {
-                hairSettingsFieldInfo = raceSettings.GetType().GetField("hairSettings");
+                hairSettingsFieldInfo = raceSettings.GetType().GetField("styleSettings");
 #if ALIEN_DEBUG || DEBUG || REFLECTION_DEBUG
                 Log.Warning("hairSettingsFieldInfo found: " + (string)((hairSettingsFieldInfo != null) ? "True" : "False"));
 #endif
             }
+
             if (hairSettingsFieldInfo == null)
             {
                 Log.ErrorOnce("Unable to get hairSettingsFieldInfo", "hairSettingsFieldInfo".GetHashCode());
                 return null;
             }
+
             return hairSettingsFieldInfo.GetValue(raceSettings);
         }
 
         public static bool HasHair(Pawn pawn)
         {
-            object hairSettings = GetHairSettings(pawn);
-            if (hairSettings == null)
-            {
-                return false;
-            }
-            var fi = hairSettings.GetType().GetField("hasHair");
-            if (fi == null)
-            {
-                Log.ErrorOnce("Unable to get hasHair", "hasHair".GetHashCode());
-                return false;
-            }
-            return (bool)fi.GetValue(hairSettings);
+            // object styleSettings = GetHairSettings(pawn);
+            // if (styleSettings == null)
+            // {
+            //     return false;
+            // }
+            // foreach (var enumValue in styleSettings.GetType().GetEnumValues())
+            // {
+            //     Log.Message(enumValue.ToString());
+            // }
+            // var fi = styleSettings.GetType().GetField("hasStyle");
+            // Log.Message(styleSettings.ToString());
+            // if (fi == null)
+            // {
+            //     Log.ErrorOnce("Unable to get hasHair", "hasStyle".GetHashCode());
+            //     return false;
+            // }
+            // return (bool)fi.GetValue(styleSettings);
+            return true;
         }
 
         public static object GetGeneralSettings(Pawn pawn)
@@ -78,6 +91,7 @@ namespace ChangeDresser
             {
                 return null;
             }
+
             if (generalSettingsFieldInfo == null)
             {
                 generalSettingsFieldInfo = raceSettings.GetType().GetField("generalSettings");
@@ -85,11 +99,13 @@ namespace ChangeDresser
                 Log.Warning("generalSettingsFieldInfo found: " + (string)((generalSettingsFieldInfo != null) ? "True" : "False"));
 #endif
             }
+
             if (generalSettingsFieldInfo == null)
             {
                 Log.ErrorOnce("Unable to get generalSettings", "generalSettings".GetHashCode());
                 return null;
             }
+
             return generalSettingsFieldInfo.GetValue(raceSettings);
         }
 
@@ -102,6 +118,7 @@ namespace ChangeDresser
                 Log.ErrorOnce("Unable to get hairTags", "hairTags".GetHashCode());
                 return null;
             }
+
             return (List<string>)fi.GetValue(hairSettings);
         }
 
@@ -124,12 +141,23 @@ namespace ChangeDresser
             FieldInfo fi = GetMaleGenderProbabilityFieldInfo(pawn);
             if (fi == null)
             {
-                Log.ErrorOnce("Unable to get male gender probability. Setting to 0.5f", "maleGenderProbability".GetHashCode());
+                Log.ErrorOnce("Unable to get male gender probability. Setting to 0.5f",
+                    "maleGenderProbability".GetHashCode());
                 return .5f;
             }
+
             return (float)fi.GetValue(GetGeneralSettings(pawn));
         }
+
         #endregion
+
+        public static bool Initiated
+        {
+            get
+            {
+                return initialized;
+            }
+        }
 
         public static bool Exists
         {
@@ -147,19 +175,23 @@ namespace ChangeDresser
                     {
                         foreach (Assembly assembly in pack.assemblies.loadedAssemblies)
                         {
-                            if (assembly.GetName().Name.Equals("AlienRace") &&
-                                assembly.GetType("AlienRace.ThingDef_AlienRace") != null)
+                            if (assembly.GetName().Name.Equals("AlienRace"))
                             {
-                                initialized = true;
-                                alienRaceEnabled = true;
-                                break;
+                                if (assembly.GetType("AlienRace.ThingDef_AlienRace") != null)
+                                {
+                                    initialized = true;
+                                    alienRaceEnabled = true;
+                                    break;
+                                }
                             }
                         }
+
                         if (initialized)
                         {
                             break;
                         }
                     }
+
                     initialized = true;
                 }
 #if ALIEN_DEBUG && DEBUG
@@ -178,7 +210,7 @@ namespace ChangeDresser
 #endif
                 if (Exists && alienRaces.Count == 0)
                 {
-                    foreach(ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading)
+                    foreach (ThingDef def in DefDatabase<ThingDef>.AllDefsListForReading)
                     {
                         if (def.GetType().GetField("alienRace") != null)
                         {
@@ -205,7 +237,14 @@ namespace ChangeDresser
 
         public static bool IsAlien(Pawn pawn)
         {
-            return AlienRaces.Contains(pawn.def);
+            // return false;
+            // Log.Message("10");
+            if (Exists)
+            {
+                // Log.Message("11");
+                return AlienRaces.Contains(pawn.def);
+            }
+            return false;
         }
     }
 }

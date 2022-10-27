@@ -156,7 +156,7 @@ namespace ChangeDresser
                         base.Position, base.Map, 10, float.MaxValue);
                     // this.GetRoomGroup().Temperature += generatedHeat;
                     GenTemperature.PushHeat(this, generatedHeat);
-                    // this.compPowerTrader.PowerOutput = -this.compPowerTrader.Props.basePowerConsumption; //todo: power
+                    this.compPowerTrader.PowerOutput = -this.compPowerTrader.Props.PowerConsumption; //todo: power
                 }
                 else
                 {

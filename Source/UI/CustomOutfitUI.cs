@@ -48,16 +48,16 @@ namespace ChangeDresser.UI
 #if CUSTOM_OUTFIT_UI
             Log.Message("    Populate Selectable Pawns:");
 #endif
-            foreach (Pawn p in PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_Colonists)
+            foreach (Pawn p in PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_OfPlayerFaction)
             {
-#if CUSTOM_OUTFIT_UI
+// #if CUSTOM_OUTFIT_UI
                 Log.Message("        " + p.Name.ToStringShort + " " + p.Faction + " " + p.def.defName);
-#endif
-                if (p.Faction == Faction.OfPlayer && p.def.race.Humanlike && p.apparel?.LockedApparel?.Count == 0)
+// #endif
+                if (p.def.race.Humanlike && p.apparel?.LockedApparel?.Count == 0)
                 {
-#if CUSTOM_OUTFIT_UI
+// #if CUSTOM_OUTFIT_UI
                     Log.Message("            -- Added");
-#endif
+// #endif
                     selectablePawns.Add(p);
                 }
             }
@@ -172,14 +172,19 @@ namespace ChangeDresser.UI
                 y += 35;
 
                 Listing_Standard ls = new Listing_Standard();
-                ls.Begin(new Rect(775, y, 216, inRect.height - y ));
-                Rect view = new Rect(0, 0, 200, 64 * this.apparelFilter.StatDefs.Count);
-                // ls.BeginScrollView(
-                //     new Rect(0, 0, 216, inRect.height - y ), ref filterScrollPosition, ref view); //todo: Scroll View
+                Rect listingRect = new Rect(775, y, 216, inRect.height - y);
+                // ls.Begin(listingRect);
+                Rect inView = new Rect(0, 0, 200, 64 * this.apparelFilter.StatDefs.Count);
+                // Rect outView = new Rect(0, 0, 216, inRect.height - y);
+                Widgets.BeginScrollView(listingRect, ref filterScrollPosition, inView);
+                listingRect.width -= 20f;
+                listingRect.height = 100000f;
+                ls.Begin(listingRect.AtZero());
+                
                 
                 ls.Label("HitPointsBasic".ToString() + " " + (int)this.apparelFilter.HP);
                 this.apparelFilter.HP = ls.Slider(this.apparelFilter.HP, 0, 100);
-
+                
                 for (int i = 0; i < this.apparelFilter.StatDefs.Count; ++i)
                 {
                     StatDefValue sdv = this.apparelFilter.StatDefs[i];
@@ -192,8 +197,8 @@ namespace ChangeDresser.UI
                         this.apparelFilter.StatDefs[i] = sdv;
                     }
                 }
-
-                // ls.EndScrollView(ref view);
+                inView = new Rect(0.0f, 0.0f, listingRect.width, ls.CurHeight);
+                Widgets.EndScrollView();
                 ls.End();
             }
             catch (Exception e)
@@ -616,33 +621,33 @@ namespace ChangeDresser.UI
             this.StatDefs.Add(new StatDefValue(StatDefOf.Insulation_Cold, 20));
             this.StatDefs.Add(new StatDefValue(StatDefOf.Insulation_Heat, 20));
 
-            /*
-            this.StatDefs.Add(new StatDefValue(StatDefOf.CarryingCapacity, 20));
-            this.StatDefs.Add(new StatDefValue(StatDefOf.GlobalLearningFactor, 1));
+             
+             this.StatDefs.Add(new StatDefValue(StatDefOf.CarryingCapacity, 20));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.GlobalLearningFactor, 1));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.MeleeDodgeChance, 1));
-            this.StatDefs.Add(new StatDefValue(StatDefOf.MeleeHitChance, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.MeleeDodgeChance, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.MeleeHitChance, 1));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.MoveSpeed, 10));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.MoveSpeed, 10));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.WorkSpeedGlobal, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.WorkSpeedGlobal, 1));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.AimingDelayFactor, 1));
-            this.StatDefs.Add(new StatDefValue(StatDefOf.AnimalGatherSpeed, 1));
-            this.StatDefs.Add(new StatDefValue(StatDefOf.AnimalGatherYield, 2));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.AimingDelayFactor, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.AnimalGatherSpeed, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.AnimalGatherYield, 2));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.MiningSpeed, 1));
-            this.StatDefs.Add(new StatDefValue(StatDefOf.MiningYield, 1));
-            
-            this.StatDefs.Add(new StatDefValue(StatDefOf.PlantWorkSpeed, 1));
-            this.StatDefs.Add(new StatDefValue(StatDefOf.PlantHarvestYield, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.MiningSpeed, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.MiningYield, 1));
+             
+             this.StatDefs.Add(new StatDefValue(StatDefOf.PlantWorkSpeed, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.PlantHarvestYield, 1));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.PsychicSensitivity, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.PsychicSensitivity, 1));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.SocialImpact, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.SocialImpact, 1));
 
-            this.StatDefs.Add(new StatDefValue(StatDefOf.TameAnimalChance, 1));
-            this.StatDefs.Add(new StatDefValue(StatDefOf.TrainAnimalChance, 1));*/
+             this.StatDefs.Add(new StatDefValue(StatDefOf.TameAnimalChance, 1));
+             this.StatDefs.Add(new StatDefValue(StatDefOf.TrainAnimalChance, 1));
         }
 
         public bool IncludeAppareL(Apparel a)

@@ -8,6 +8,9 @@ using ChangeDresser.UI.DTO.SelectionWidgetDTOs;
 using System.Reflection;
 using System;
 using System.Collections.Generic;
+using AlienRace;
+
+// using AlienRace;
 
 namespace ChangeDresser.UI
 {
@@ -130,6 +133,15 @@ namespace ChangeDresser.UI
                             isShowing = true;
                         }
 
+                        if (this.dresserDto.SkinColorDto != null)
+                        {
+                            WidgetUtil.AddColorSelectorWidget(editorLeft, top, editorWidth,
+                                this.dresserDto.SkinColorDto,
+                                this.dresserDto.SkinColorDto.ColorPresetsDTO);
+                            top += WidgetUtil.SelectionRowHeight + 120f;
+                            isShowing = true;
+                        }
+
                         if (this.dresserDto.SkinColorSliderDto != null)
                         {
                             WidgetUtil.AddSliderWidget(editorLeft, top, editorWidth,
@@ -145,9 +157,9 @@ namespace ChangeDresser.UI
 
                         if (Settings.ShowGenderAgeChange)
                         {
-                            GUI.Label(new Rect(editorLeft, 300f, editorWidth, 40f),
+                            GUI.Label(new Rect(editorLeft, 360f, editorWidth, 40f),
                                 "ChangeDresser.GenderChangeWarning".Translate(), WidgetUtil.MiddleCenter);
-                            top = 340f;
+                            top = 400f;
                             WidgetUtil.AddSelectorWidget(editorLeft, top, editorWidth,
                                 "ChangeDresser.Gender".Translate() + ":", this.dresserDto.GenderSelectionDto);
 
@@ -179,23 +191,23 @@ namespace ChangeDresser.UI
                         const float listboxHeight = 250f;
                         if (this.dresserDto.HairStyleSelectionDto != null)
                         {
-                            //bool showHairColor = this.dresserDto.HairColorSelectionDto != null;
+                            bool showHairColor = this.dresserDto.HairColorSelectionDto != null;
 
                             float height = listboxHeight;
-                            /*if (!showHairColor)
+                            if (!showHairColor)
                             {
                                 height += 250;
-                            }*/
+                            }
 
                             WidgetUtil.AddListBoxWidget(editorLeft, editorTop, editorWidth, height,
                                 "ChangeDresser.HairStyle".Translate() + ":", this.dresserDto.HairStyleSelectionDto);
 
-                            //if (showHairColor)
-                            //{
+                            if (showHairColor)
+                            {
                             WidgetUtil.AddColorSelectorWidget(editorLeft, editorTop + listboxHeight + 10f, editorWidth,
                                 this.dresserDto.HairColorSelectionDto,
                                 this.dresserDto.HairColorSelectionDto.ColorPresetsDTO);
-                            //}
+                            }
 
                             if (this.dresserDto.GradientHairColorSelectionDto != null)
                             {
@@ -242,27 +254,32 @@ namespace ChangeDresser.UI
 
                         break;
 
-                    /*case CurrentEditorEnum.ChangeDresserAlienHairColor:
+                    case CurrentEditorEnum.ChangeDresserAlienHairColor:
                         if (this.dresserDto.AlienHairColorPrimary != null)
                         {
                             GUI.color = Color.white;
                             Text.Font = GameFont.Medium;
-                            GUI.Label(new Rect(editorLeft, editorTop, editorWidth, 30), "ChangeDresser.AlienPrimaryHairColor".Translate());
+                            GUI.Label(new Rect(editorLeft, editorTop, editorWidth, 30),
+                                "ChangeDresser.AlienPrimaryHairColor".Translate());
                             Text.Font = GameFont.Small;
-
-                            WidgetUtil.AddColorSelectorWidget(editorLeft, editorTop + 40, editorWidth, this.dresserDto.AlienHairColorPrimary, null);
+                    
+                            WidgetUtil.AddColorSelectorWidget(editorLeft, editorTop + 40, editorWidth,
+                                this.dresserDto.AlienHairColorPrimary, null);
                         }
-
+                    
                         if (this.dresserDto.AlienHairColorSecondary != null)
                         {
                             GUI.color = Color.white;
                             Text.Font = GameFont.Medium;
-                            GUI.Label(new Rect(editorLeft, editorTop + 260, editorWidth, 30), "ChangeDresser.AlienSecondaryHairColor".Translate());
+                            GUI.Label(new Rect(editorLeft, editorTop + 260, editorWidth, 30),
+                                "ChangeDresser.AlienSecondaryHairColor".Translate());
                             Text.Font = GameFont.Small;
-
-                            WidgetUtil.AddColorSelectorWidget(editorLeft, editorTop + 300, editorWidth, this.dresserDto.AlienHairColorSecondary, null);
+                    
+                            WidgetUtil.AddColorSelectorWidget(editorLeft, editorTop + 300, editorWidth,
+                                this.dresserDto.AlienHairColorSecondary, null);
                         }
-                        break;*/
+                    
+                        break;
                 }
 
                 Text.Anchor = TextAnchor.MiddleLeft;
@@ -399,6 +416,14 @@ namespace ChangeDresser.UI
 
                 if (this.dresserDto != null)
                 {
+                    if (this.dresserDto.SkinColorDto != null &&
+                        this.dresserDto.SkinColorDto.ColorPresetsDTO != null &&
+                        this.dresserDto.SkinColorDto.ColorPresetsDTO.IsModified == true)
+                    {
+                        IOUtil.SaveColorPresets(ColorPresetType.Skin,
+                            this.dresserDto.SkinColorDto.ColorPresetsDTO);
+                    }
+
                     if (this.dresserDto.ApparelSelectionsContainer != null &&
                         this.dresserDto.ApparelSelectionsContainer.ColorPresetsDTO != null &&
                         this.dresserDto.ApparelSelectionsContainer.ColorPresetsDTO.IsModified == true)
@@ -526,6 +551,10 @@ namespace ChangeDresser.UI
                 else if (sender is SliderWidgetDTO)
                 {
                     // pawn.story.melanin = (float)value; //todo: melanin
+                }
+                else if (sender is SelectionColorWidgetDTO)
+                {
+                    pawn.story.SkinColorBase = (Color)value;
                 }
             }
 

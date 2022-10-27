@@ -97,7 +97,7 @@ namespace ChangeDresser.UI.DTO.SelectionWidgetDTOs
         {
             set
             {
-                HeadTypeDef headType = (HeadTypeDef)this.SelectedItem;
+                HeadTypeDef headType = (HeadTypeDef)this.SelectedItem; 
                 if (value == Gender.Female)
                 {
                     this.savedMaleIndex = base.index;
@@ -111,7 +111,7 @@ namespace ChangeDresser.UI.DTO.SelectionWidgetDTOs
                     base.index = savedMaleIndex;
                 }
 
-                // this.FindIndex(headType);
+                this.FindIndex(headType);
                 base.IndexChanged();
             }
         }

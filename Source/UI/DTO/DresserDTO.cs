@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 using ChangeDresser.UI.DTO.SelectionWidgetDTOs;
 using ChangeDresser.UI.Enums;
 using Verse;
@@ -53,20 +54,22 @@ namespace ChangeDresser.UI.DTO
         public ApparelColorSelectionsContainer ApparelSelectionsContainer { get; protected set; }
         public ApparelLayerSelectionsContainer ApparelLayerSelectionsContainer { get; protected set; }
         public SliderWidgetDTO SkinColorSliderDto { get; protected set; }
+        public SkinColorSelectionDTO SkinColorDto { get; protected set; }
         public HeadTypeSelectionDTO HeadTypeSelectionDto { get; protected set; }
 
         public SelectionColorWidgetDTO AlienSkinColorPrimary { get; protected set; }
         public SelectionColorWidgetDTO AlienSkinColorSecondary { get; protected set; }
-        //public HairColorSelectionDTO AlienHairColorPrimary { get; protected set; }
-        //public HairColorSelectionDTO AlienHairColorSecondary { get; protected set; }
+        public HairColorSelectionDTO AlienHairColorPrimary { get; protected set; }
+        public HairColorSelectionDTO AlienHairColorSecondary { get; protected set; }
 
         public DresserDTO(Pawn pawn, CurrentEditorEnum currentEditorEnum, IEnumerable<CurrentEditorEnum> editors)
         {
             this.Pawn = pawn;
 
             this.CurrentEditorEnum = currentEditorEnum;
-            this.EditorTypeSelectionDto = new EditorTypeSelectionDTO(this.CurrentEditorEnum, new List<CurrentEditorEnum>(editors));
-            this.EditorTypeSelectionDto.SelectionChangeListener += delegate (object sender)
+            this.EditorTypeSelectionDto =
+                new EditorTypeSelectionDTO(this.CurrentEditorEnum, new List<CurrentEditorEnum>(editors));
+            this.EditorTypeSelectionDto.SelectionChangeListener += delegate(object sender)
             {
                 this.CurrentEditorEnum = (CurrentEditorEnum)this.EditorTypeSelectionDto.SelectedItem;
                 if (this.CurrentEditorEnum == CurrentEditorEnum.ChangeDresserHair)
@@ -78,7 +81,7 @@ namespace ChangeDresser.UI.DTO
                     Prefs.HatsOnlyOnMap = false;
                 }
             };
-            
+
             this.HasHair = true;
 
             this.BodyTypeSelectionDto = null;
@@ -87,21 +90,24 @@ namespace ChangeDresser.UI.DTO
             this.HairColorSelectionDto = null;
             this.GradientHairColorSelectionDto = null;
             this.SkinColorSliderDto = null;
+            this.SkinColorDto = null;
             this.HeadTypeSelectionDto = null;
 
             this.AlienSkinColorPrimary = null;
             this.AlienSkinColorSecondary = null;
-            //this.AlienHairColorPrimary = null;
-            //this.AlienHairColorSecondary = null;
+            this.AlienHairColorPrimary = null;
+            this.AlienHairColorSecondary = null;
 
             if (this.EditorTypeSelectionDto.Contains(CurrentEditorEnum.ChangeDresserApparelColor))
             {
-                this.ApparelSelectionsContainer = new ApparelColorSelectionsContainer(this.Pawn.apparel.WornApparel, IOUtil.LoadColorPresets(ColorPresetType.Apparel));
+                this.ApparelSelectionsContainer = new ApparelColorSelectionsContainer(this.Pawn.apparel.WornApparel,
+                    IOUtil.LoadColorPresets(ColorPresetType.Apparel));
             }
 
             if (this.EditorTypeSelectionDto.Contains(CurrentEditorEnum.ChangeDresserApparelLayerColor))
             {
-                this.ApparelLayerSelectionsContainer = new ApparelLayerSelectionsContainer(this.Pawn, IOUtil.LoadColorPresets(ColorPresetType.Apparel));
+                this.ApparelLayerSelectionsContainer =
+                    new ApparelLayerSelectionsContainer(this.Pawn, IOUtil.LoadColorPresets(ColorPresetType.Apparel));
             }
 
             this.Initialize();
@@ -114,17 +120,24 @@ namespace ChangeDresser.UI.DTO
 #endif
             if (this.EditorTypeSelectionDto.Contains(CurrentEditorEnum.ChangeDresserBody))
             {
+
                 this.originalAgeBioTicks = this.Pawn.ageTracker.AgeBiologicalTicks;
                 this.originalAgeChronTicks = this.Pawn.ageTracker.AgeChronologicalTicks;
-                if (this.Pawn.ageTracker.CurLifeStage.ToString().Equals(LifeStageDefOf.HumanlikeAdult.ToString()))
-                    this.BodyTypeSelectionDto = new BodyTypeSelectionDTO(this.Pawn.story.bodyType, this.Pawn.gender, this.Pawn.ageTracker.CurLifeStage);
+                // if (this.Pawn.ageTracker.CurLifeStage.ToString().Equals(LifeStageDefOf.HumanlikeAdult.ToString()))
+                this.BodyTypeSelectionDto = new BodyTypeSelectionDTO(this.Pawn.story.bodyType, this.Pawn.gender,
+                    this.Pawn.ageTracker.CurLifeStage);
 
-                this.HeadTypeSelectionDto = new HeadTypeSelectionDTO(this.Pawn.story.headType, this.Pawn.gender, this.Pawn.genes); //todo: HeadGraphicPath
+                this.HeadTypeSelectionDto =
+                    new HeadTypeSelectionDTO(this.Pawn.story.headType, this.Pawn.gender,
+                        this.Pawn.genes);
 
-                // this.SkinColorSliderDto = new SliderWidgetDTO(this.Pawn.story.melanin, 0, 1); // todo:melanin
+                // this.SkinColorSliderDto = new SliderWidgetDTO(this.Pawn.story.melanin, 0, 1);
+                ColorPresetsDTO skinColorPresets = IOUtil.LoadColorPresets(ColorPresetType.Skin);
+                this.SkinColorDto = new SkinColorSelectionDTO(this.Pawn.story.SkinColorBase,
+                    skinColorPresets);
 
                 this.GenderSelectionDto = new GenderSelectionDTO(this.Pawn.gender);
-                this.GenderSelectionDto.SelectionChangeListener += delegate (object sender)
+                this.GenderSelectionDto.SelectionChangeListener += delegate(object sender)
                 {
                     if (this.BodyTypeSelectionDto != null)
                         this.BodyTypeSelectionDto.Gender = (Gender)this.GenderSelectionDto.SelectedItem;
@@ -146,6 +159,7 @@ namespace ChangeDresser.UI.DTO
                         enabled = false;
                         color = Color.white;
                     }
+
                     this.GradientHairColorSelectionDto = new HairColorSelectionDTO(color, hairColorPresets, enabled);
                 }
             }
@@ -155,7 +169,8 @@ namespace ChangeDresser.UI.DTO
         {
             if (this.ApparelLayerSelectionsContainer != null)
             {
-                foreach (ApparelLayerColorSelectionDTO dto in this.ApparelLayerSelectionsContainer.ApparelLayerSelections)
+                foreach (ApparelLayerColorSelectionDTO dto in this.ApparelLayerSelectionsContainer
+                             .ApparelLayerSelections)
                 {
                     dto.UpdatePawnListener += updatePawn;
                 }
@@ -185,16 +200,18 @@ namespace ChangeDresser.UI.DTO
                 this.GradientHairColorSelectionDto.UpdatePawnListener += updatePawn;
             if (this.SkinColorSliderDto != null)
                 this.SkinColorSliderDto.UpdatePawnListener += updatePawn;
+            if (this.SkinColorDto != null)
+                this.SkinColorDto.UpdatePawnListener += updatePawn;
             if (this.HeadTypeSelectionDto != null)
                 this.HeadTypeSelectionDto.UpdatePawnListener += updatePawn;
             if (this.AlienSkinColorPrimary != null)
                 this.AlienSkinColorPrimary.UpdatePawnListener += updatePawn;
             if (this.AlienSkinColorSecondary != null)
                 this.AlienSkinColorSecondary.UpdatePawnListener += updatePawn;
-            //if (this.AlienHairColorPrimary != null)
-            //    this.AlienHairColorPrimary.UpdatePawnListener += updatePawn;
-            //if (this.AlienHairColorSecondary != null)
-            //    this.AlienHairColorSecondary.UpdatePawnListener += updatePawn;
+            if (this.AlienHairColorPrimary != null)
+                this.AlienHairColorPrimary.UpdatePawnListener += updatePawn;
+            if (this.AlienHairColorSecondary != null)
+                this.AlienHairColorSecondary.UpdatePawnListener += updatePawn;
         }
 
         public void ResetToDefault()
@@ -219,21 +236,23 @@ namespace ChangeDresser.UI.DTO
                 this.ApparelLayerSelectionsContainer.ResetToDefault();
             if (this.SkinColorSliderDto != null)
                 this.SkinColorSliderDto.ResetToDefault();
+            if (this.SkinColorDto != null)
+                this.SkinColorDto.ResetToDefault();
             if (this.HeadTypeSelectionDto != null)
                 this.HeadTypeSelectionDto.ResetToDefault();
 
             if (this.originalAgeBioTicks != long.MinValue)
                 this.Pawn.ageTracker.AgeBiologicalTicks = this.originalAgeBioTicks;
-                this.BodyTypeSelectionDto.LifeStage = this.Pawn.ageTracker.CurLifeStage;
+            this.BodyTypeSelectionDto.LifeStage = this.Pawn.ageTracker.CurLifeStage;
             if (this.originalAgeChronTicks != long.MinValue)
                 this.Pawn.ageTracker.AgeChronologicalTicks = this.originalAgeChronTicks;
-            
+
             if (this.AlienSkinColorPrimary != null)
                 this.AlienSkinColorPrimary.ResetToDefault();
             if (this.AlienSkinColorSecondary != null)
                 this.AlienSkinColorSecondary.ResetToDefault();
-            // this.AlienHairColorPrimary?.ResetToDefault();
-            // this.AlienHairColorSecondary?.ResetToDefault();
+            this.AlienHairColorPrimary?.ResetToDefault();
+            this.AlienHairColorSecondary?.ResetToDefault();
 #if TRACE
             Log.Warning("End DresserDTO.ResetToDefault" + System.Environment.NewLine);
 #endif
