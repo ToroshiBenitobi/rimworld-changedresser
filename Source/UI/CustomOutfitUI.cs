@@ -50,14 +50,14 @@ namespace ChangeDresser.UI
 #endif
             foreach (Pawn p in PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_OfPlayerFaction)
             {
-// #if CUSTOM_OUTFIT_UI
+#if CUSTOM_OUTFIT_UI
                 Log.Message("        " + p.Name.ToStringShort + " " + p.Faction + " " + p.def.defName);
-// #endif
+#endif
                 if (p.def.race.Humanlike && p.apparel?.LockedApparel?.Count == 0)
                 {
-// #if CUSTOM_OUTFIT_UI
+#if CUSTOM_OUTFIT_UI
                     Log.Message("            -- Added");
-// #endif
+#endif
                     selectablePawns.Add(p);
                 }
             }
