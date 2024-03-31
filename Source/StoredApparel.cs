@@ -62,6 +62,62 @@ namespace ChangeDresser
             }
         }
 
+        
+        private static readonly SimpleCurve HitPointsPercentScoreFactorCurve = new SimpleCurve()
+        {
+            {
+                new CurvePoint(0.0f, 0.0f),
+                true
+            },
+            {
+                new CurvePoint(0.2f, 0.2f),
+                true
+            },
+            {
+                new CurvePoint(0.22f, 0.3f),
+                true
+            },
+            {
+                new CurvePoint(0.5f, 0.3f),
+                true
+            },
+            {
+                new CurvePoint(0.52f, 1f),
+                true
+            }
+        };
+
+        private static float ApparelScoreRaw(Apparel ap)
+        {
+            if (ap.def.apparel.blocksVision ||
+                ap.def.apparel.slaveApparel)
+                return -10f;
+            float num1 = 0.1f + ap.def.apparel.scoreOffset + (ap.GetStatValue(StatDefOf.ArmorRating_Sharp) +
+                                                              ap.GetStatValue(StatDefOf.ArmorRating_Blunt));
+            if (ap.def.useHitPoints)
+            {
+                float x = (float)ap.HitPoints / (float)ap.MaxHitPoints;
+                num1 *= HitPointsPercentScoreFactorCurve.Evaluate(x);
+            }
+
+            float num2 = num1 + ap.GetSpecialApparelScoreOffset();
+            float num3 = 1f;
+
+            float num4 = num2 * num3;
+            if (ap.WornByCorpse)
+            {
+                num4 -= 0.5f;
+                if ((double)num4 > 0.0)
+                    num4 *= 0.1f;
+            }
+            if (ap.Stuff == ThingDefOf.Human.race.leatherDef)
+            {
+                num4 -= 0.5f;
+            }
+            return num4;
+        }
+
+
         private void AddApparelToLinkedList(Apparel apparel, LinkedList<Apparel> l)
         {
 #if DEBUG
@@ -73,17 +129,17 @@ namespace ChangeDresser
 
 #endif
             // Pawn pawn = PawnGenerator.GeneratePawn(PawnKindDefOf.Pirate);
-            Pawn pawn = null;
-            List<Pawn> pawns = PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_OfPlayerFaction;
-            if (pawns != null && pawns.Count > 0)
-                pawn = pawns[0];
-            else
-                pawn = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist);
+            // Pawn pawn = null;
+            // List<Pawn> pawns = PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_OfPlayerFaction;
+            // if (pawns != null && pawns.Count > 0)
+            //     pawn = pawns[0];
+            // else
+            //     pawn = PawnGenerator.GeneratePawn(PawnKindDefOf.Colonist);
 
-            float score = JobGiver_OptimizeApparel.ApparelScoreRaw(pawn, apparel);
+            float score = ApparelScoreRaw(apparel);
             for (LinkedListNode<Apparel> n = l.First; n != null; n = n.Next)
             {
-                float nScore = JobGiver_OptimizeApparel.ApparelScoreRaw(pawn, apparel);
+                float nScore = ApparelScoreRaw(apparel);
                 if (score >= nScore)
                 {
                     l.AddBefore(n, apparel);
