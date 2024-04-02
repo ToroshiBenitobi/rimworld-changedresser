@@ -27,7 +27,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\SteamLibrary\steamapps\common\RimWorld\Mods\ChangeDresser\1.4\Assemblies</OutputPath>
+    <OutputPath>C:\SteamLibrary\steamapps\common\RimWorld\Mods\ChangeDresser\1.5\Assemblies</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>packages\Lib.Harmony.2.2.2\net472\0Harmony.dll</HintPath>
+      <HintPath>C:\SteamLibrary\steamapps\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AlienRace">
@@ -136,6 +136,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages\Lib.Harmony.2.2.2\Lib.Harmony.2.2.2.nupkg" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net35\0Harmony.dll" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net35\0Harmony.xml" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net45\0Harmony.dll" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net45\0Harmony.xml" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net472\0Harmony.dll" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net472\0Harmony.xml" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net48\0Harmony.dll" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net48\0Harmony.xml" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net5.0\0Harmony.deps.json" />
+    <Content Include="packages\Lib.Harmony.2.2.2\net5.0\0Harmony.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

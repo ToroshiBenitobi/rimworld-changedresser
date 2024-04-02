@@ -23,6 +23,7 @@
 	<ChangeDresser.WearingDesc>Actualmente vistiendo este traje.</ChangeDresser.WearingDesc>
 	<ChangeDresser.IncludeInTradeDeals>Vender ropa</ChangeDresser.IncludeInTradeDeals>
 	<ChangeDresser.IncludeInTradeDealsDesc>Cambia si se incluye la ropa almacenada en los intercambios comerciales.</ChangeDresser.IncludeInTradeDealsDesc>
+	<ChangeDresser.RenameLabel>Renombrar tocador</ChangeDresser.RenameLabel>
 	
 	<!-- Common Strings -->
 	<ChangeDresser.Worn>Usado</ChangeDresser.Worn>
@@ -58,7 +59,11 @@
 	<ChangeDresser.UseForBattle>Usar en batalla</ChangeDresser.UseForBattle>
 	<ChangeDresser.AvailableApparel>Ropa disponible</ChangeDresser.AvailableApparel>
 	<ChangeDresser.CustomOutfitApparel>Traje personalizado</ChangeDresser.CustomOutfitApparel>
-	
+	<ChangeDresser.ResetOptions>Restablecer opciones</ChangeDresser.ResetOptions>
+	<ChangeDresser.ResetColonist>Restablecer la ropa de los colonos</ChangeDresser.ResetColonist>
+	<ChangeDresser.ClearAbsentAndRetrieveApparels>Borrar la ropa de los colonos ausentes y recuperar la ropa personalizada</ChangeDresser.ClearAbsentAndRetrieveApparels>
+
+
 	<!-- Custom Outfit UI -->
 	<ChangeDresser.OutfitName>Nombre</ChangeDresser.OutfitName>
 	

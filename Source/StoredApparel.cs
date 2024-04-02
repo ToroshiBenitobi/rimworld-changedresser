@@ -349,8 +349,9 @@ namespace ChangeDresser
             return false;
         }
 
-        internal bool TryRemoveBestApparel(ThingDef def, ThingFilter filter, out Apparel apparel)
+        internal bool TryRemoveBestApparel(ThingDef def, Pawn pawn, out Apparel apparel)
         {
+            ThingFilter filter = pawn.outfits.CurrentApparelPolicy.filter;
 #if DEBUG
             Log.Message(Environment.NewLine + "Start StoredApparel.TryRemoveBestApperal Def: " + def.label);
 #endif
@@ -369,7 +370,7 @@ namespace ChangeDresser
                     try
                     {
                         var next = n.Next;
-                        if (filter.Allows(n.Value))
+                        if (filter.Allows(n.Value) && n.Value.PawnCanWear(pawn))
                         {
                             l.Remove(n);
                             apparel = n.Value;
@@ -421,7 +422,7 @@ namespace ChangeDresser
         }
 
         public bool FindBetterApparel(ref float baseApparelScore, ref Apparel betterApparel, Pawn pawn,
-            Outfit currentOutfit, Building dresser)
+            ApparelPolicy currentOutfit, Building dresser)
         {
 #if BETTER_OUTFIT
             Log.Warning("Begin StoredApparel.FindBetterApparel");

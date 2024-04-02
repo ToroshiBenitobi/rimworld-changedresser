@@ -23,6 +23,7 @@
   <ChangeDresser.WearingDesc>当前正穿着该服装方案。</ChangeDresser.WearingDesc>
   <ChangeDresser.IncludeInTradeDeals>出售</ChangeDresser.IncludeInTradeDeals>
   <ChangeDresser.IncludeInTradeDealsDesc>切换，是否让已存储的服装出现在贸易目录里。</ChangeDresser.IncludeInTradeDealsDesc>
+  <ChangeDresser.RenameLabel>重命名梳妆台</ChangeDresser.RenameLabel>
 
   <!-- Common Strings -->
   <ChangeDresser.Worn>已装备</ChangeDresser.Worn>
@@ -58,6 +59,10 @@
   <ChangeDresser.UseForBattle>战斗中使用</ChangeDresser.UseForBattle>
   <ChangeDresser.AvailableApparel>可用服装</ChangeDresser.AvailableApparel>
   <ChangeDresser.CustomOutfitApparel>定制服装</ChangeDresser.CustomOutfitApparel>
+  <ChangeDresser.ResetOptions>重置选项</ChangeDresser.ResetOptions>
+  <ChangeDresser.ResetColonist>重置殖民者的服装</ChangeDresser.ResetColonist>
+  <ChangeDresser.ClearAbsentAndRetrieveApparels>清除缺席殖民者的服装并找回定制服装</ChangeDresser.ClearAbsentAndRetrieveApparels>
+
 
   <!-- Custom Outfit UI -->
   <ChangeDresser.OutfitName>名称</ChangeDresser.OutfitName>

@@ -23,6 +23,7 @@ namespace ChangeDresser
 #endif
                 pawn.apparel.Remove(a);
             }
+
             pawn.outfits.forcedHandler.ForcedApparel.Clear();
 #if DRESSER_OUTFIT
             Log.Warning("End ApparelUtil.RemoveApparel Removed Count: " + wornApparel.Count);
@@ -54,7 +55,9 @@ namespace ChangeDresser
 #endif
         }
 
-        static readonly MethodInfo optApparelMI = typeof(JobGiver_OptimizeApparel).GetMethod("TryGiveJob", BindingFlags.Instance | BindingFlags.NonPublic);
+        static readonly MethodInfo optApparelMI =
+            typeof(JobGiver_OptimizeApparel).GetMethod("TryGiveJob", BindingFlags.Instance | BindingFlags.NonPublic);
+
         public static void OptimizeApparel(Pawn pawn)
         {
             bool hasDressers = WorldComp.HasDressers(pawn.Map);
@@ -78,6 +81,7 @@ namespace ChangeDresser
 #endif
                     if (job == null)
                         break;
+                    
 #if TRACE && DRESSER_OUTFIT
                 Log.Message(job.def.defName);
 #endif
@@ -86,13 +90,17 @@ namespace ChangeDresser
                         Apparel a = ((job.targetB != null) ? job.targetB.Thing : null) as Apparel;
                         if (a == null)
                         {
-                            Log.Warning("ChangeDresser: OptimizeApparelUtil.OptimizeApparel: Problem equiping pawn. Apparel is null.");
+                            Log.Warning(
+                                "ChangeDresser: OptimizeApparelUtil.OptimizeApparel: Problem equiping pawn. Apparel is null.");
                             break;
                         }
 #if TRACE && DRESSER_OUTFIT
                     Log.Message("Wear from ground " + a.Label);
 #endif
-                        pawn.apparel.Wear(a);
+                        if (a.PawnCanWear(pawn, true))
+                        {
+                            pawn.apparel.Wear(a);
+                        }
                     }
                     else if (job.def == Building_Dresser.WEAR_APPAREL_FROM_DRESSER_JOB_DEF)
                     {
@@ -101,14 +109,20 @@ namespace ChangeDresser
 
                         if (d == null || a == null)
                         {
-                            Log.Warning("ChangeDresser: OptimizeApparelUtil.OptimizeApparel: Problem equiping pawn. Dresser or Apparel is null.");
+                            Log.Warning(
+                                "ChangeDresser: OptimizeApparelUtil.OptimizeApparel: Problem equiping pawn. Dresser or Apparel is null.");
                             break;
                         }
 #if TRACE && DRESSER_OUTFIT
                     Log.Message("Wear from dresser " + d.Label + " " + a.Label);
 #endif
-                        d.RemoveNoDrop(a);
-                        pawn.apparel.Wear(a);
+                        Log.Message("Wear from dresser " + d.Label + " " + a.Label);
+                        Log.Message("Can Wear " + a.PawnCanWear(pawn, true));
+                        if (a.PawnCanWear(pawn, true))
+                        {
+                            d.RemoveNoDrop(a);
+                            pawn.apparel.Wear(a);
+                        }
                     }
 #if TRACE && DRESSER_OUTFIT
                 Log.Message(i + " end equip for loop");
@@ -124,7 +138,7 @@ namespace ChangeDresser
                 // When pawns are not on the home map they will not get dressed using the game's normal method
 
                 // This logic works but pawns will run back to the dresser to change cloths
-                foreach (ThingDef def in pawn.outfits.CurrentOutfit.filter.AllowedThingDefs)
+                foreach (ThingDef def in pawn.outfits.CurrentApparelPolicy.filter.AllowedThingDefs)
                 {
 #if TRACE && SWAP_APPAREL
                     Log.Warning("        Try Find Def " + def.label);
@@ -139,7 +153,8 @@ namespace ChangeDresser
 #if TRACE && SWAP_APPAREL
                             Log.Warning("            " + d.Label);
 #endif
-                            if (d.TryRemoveBestApparel(def, pawn.outfits.CurrentOutfit.filter, out Apparel apparel))
+                            if (d.TryRemoveBestApparel(def, pawn,
+                                    out Apparel apparel))
                             {
                                 WorldComp.ApparelColorTracker.RemoveApparel(apparel);
 #if TRACE && SWAP_APPAREL
@@ -163,7 +178,8 @@ namespace ChangeDresser
         }
 
         public static bool FindBetterApparel(
-            ref float baseApparelScore, ref Apparel betterApparel, Pawn pawn, Outfit currentOutfit, IEnumerable<Apparel> apparelToCheck, Building dresser)
+            ref float baseApparelScore, ref Apparel betterApparel, Pawn pawn, ApparelPolicy currentOutfit,
+            IEnumerable<Apparel> apparelToCheck, Building dresser)
         {
             if (betterApparel == null)
                 baseApparelScore = 0f;
@@ -186,6 +202,7 @@ namespace ChangeDresser
 #endif
                     break;
                 }
+
                 if (!currentOutfit.filter.Allows(apparel) ||
                     apparel.IsForbidden(pawn))
                 {
@@ -222,18 +239,25 @@ namespace ChangeDresser
                         {
                             try
                             {
-                                Log.Warning("Problem when calling CanWearTogether (" + a?.Label + ", " + apparel?.Label + ", " + pawn?.RaceProps?.body?.label + ") - " + e.GetType().Name + " " + e.Message);
+                                Log.Warning("Problem when calling CanWearTogether (" + a?.Label + ", " +
+                                            apparel?.Label + ", " + pawn?.RaceProps?.body?.label + ") - " +
+                                            e.GetType().Name + " " + e.Message);
                             }
-                            catch { }
+                            catch
+                            {
+                            }
+
                             skipApparelType = true;
                             break;
                         }
                     }
+
                     if (skipApparelType)
                     {
                         break;
                     }
                 }
+
                 /*else
                 {
                     foreach (Apparel a in wornApparel)
@@ -255,8 +279,9 @@ namespace ChangeDresser
 #if TRACE && BETTER_OUTFIT
                         Log.Message("    Has parts to wear");
 #endif
-                        if (dresser == null || 
-                            ReservationUtility.CanReserveAndReach(pawn, dresser, PathEndMode.OnCell, pawn.NormalMaxDanger(), 1))
+                        if (dresser == null ||
+                            ReservationUtility.CanReserveAndReach(pawn, dresser, PathEndMode.OnCell,
+                                pawn.NormalMaxDanger(), 1))
                         {
 #if TRACE && BETTER_OUTFIT
                             Log.Message("    Can reach dresser");
@@ -286,7 +311,7 @@ namespace ChangeDresser
             PawnOutfitTracker po;
             if (PawnOutfits.TryGetValue(pawn, out po))
             {
-                ApparelUtil.FindBetterApparel(ref baseApparelScore, ref a, pawn, pawn.outfits.CurrentOutfit, po.CustomApparel, null);
+                ApparelUtil.FindBetterApparel(ref baseApparelScore, ref a, pawn, pawn.outfits.CurrentApparelPolicy, po.CustomApparel, null);
 #if BETTER_OUTFIT
                 Log.Warning("    CustomApparel Result: " + ((a == null) ? "<null>" : a.Label) + "    Score: " + baseApparelScore);
 #endif
@@ -294,7 +319,7 @@ namespace ChangeDresser
 
             foreach (Building_Dresser d in DressersToUse)
             {
-                if (d.FindBetterApparel(ref baseApparelScore, ref a, pawn, pawn.outfits.CurrentOutfit))
+                if (d.FindBetterApparel(ref baseApparelScore, ref a, pawn, pawn.outfits.CurrentApparelPolicy))
                 {
                     dresser = d;
                 }

@@ -19,6 +19,7 @@
   <ChangeDresser.WearingDesc>현재 이 옷을 입고 있습니다.</ChangeDresser.WearingDesc>
   <ChangeDresser.IncludeInTradeDeals>복장 팔기</ChangeDresser.IncludeInTradeDeals>
   <ChangeDresser.IncludeInTradeDealsDesc>저장된 복장들을 거래 내역에 포함시킬지 여부를 전환합니다.</ChangeDresser.IncludeInTradeDealsDesc>
+  <ChangeDresser.RenameLabel>드레서 이름 변경</ChangeDresser.RenameLabel>
 
   <!-- Common Strings -->
   <ChangeDresser.Worn>현재의상</ChangeDresser.Worn>
@@ -54,6 +55,10 @@
   <!-- Assign Outfits UI -->
   <ChangeDresser.ManageOutfits>복장 정책 관리</ChangeDresser.ManageOutfits>
   <ChangeDresser.UseForBattle>전투 시 사용</ChangeDresser.UseForBattle>
+  <ChangeDresser.ResetOptions>옵션 재설정</ChangeDresser.ResetOptions>
+  <ChangeDresser.ResetColonist>식민지인의 의상 재설정</ChangeDresser.ResetColonist>
+  <ChangeDresser.ClearAbsentAndRetrieveApparels>결석한 식민지인의 의상을 지우고 맞춤 의류 검색</ChangeDresser.ClearAbsentAndRetrieveApparels>
+
 
   <!-- Game UI -->
   <ChangeDresser.StoragePriority>저장함 우선순위</ChangeDresser.StoragePriority>

@@ -32,7 +32,7 @@ namespace ChangeDresser.UI
                     {
                         PawnOutfitTracker po = new PawnOutfitTracker();
                         po.Pawn = p;
-                        Outfit currentOutfit = p.outfits.CurrentOutfit;
+                        ApparelPolicy currentOutfit = p.outfits.CurrentApparelPolicy;
                         if (currentOutfit != null)
                         {
                             po.AddOutfit(new DefinedOutfit(currentOutfit, WorldComp.GetOutfitType(currentOutfit)));
@@ -67,10 +67,10 @@ namespace ChangeDresser.UI
 
                 if (Widgets.ButtonText(new Rect(/*450*/0, 0, 150, HEIGHT), "ChangeDresser.ManageOutfits".Translate()))
                 {
-                    Find.WindowStack.Add(new Dialog_ManageOutfits(null/*Current.Game.outfitDatabase.DefaultOutfit*/));
+                    Find.WindowStack.Add(new Dialog_ManageApparelPolicies(null/*Current.Game.outfitDatabase.DefaultOutfit*/));
                 }
 
-                List<Outfit> allOutfits = Current.Game.outfitDatabase.AllOutfits;
+                List<ApparelPolicy> allOutfits = Current.Game.outfitDatabase.AllOutfits;
                 int y = 50 + HEIGHT + Y_BUFFER;
 
                 GUI.BeginScrollView(
@@ -84,7 +84,7 @@ namespace ChangeDresser.UI
                 // Header - Lists the Outfit names
                 int x = NAME_WIDTH + X_BUFFER;
                 //y = 0;
-                foreach (Outfit o in allOutfits)
+                foreach (ApparelPolicy o in allOutfits)
                 {
                     //Widgets.Label(new Rect(x, y, NAME_WIDTH, HEIGHT), "Pawns".Translate());
                     //x += CHECKBOX_WIDTH + X_BUFFER;
@@ -97,7 +97,7 @@ namespace ChangeDresser.UI
                 x = 0;
                 Widgets.Label(new Rect(x, y, NAME_WIDTH, HEIGHT), "ChangeDresser.UseForBattle".Translate());
                 x += NAME_WIDTH + X_BUFFER;
-                foreach (Outfit o in allOutfits)
+                foreach (ApparelPolicy o in allOutfits)
                 {
                     bool use = WorldComp.OutfitsForBattle.Contains(o);
                     bool useNoChange = use;
@@ -153,7 +153,7 @@ namespace ChangeDresser.UI
 				foreach (PawnOutfitTracker po in WorldComp.PawnOutfits.Values)
                 {
                     x = 0;
-                    foreach (Outfit o in allOutfits)
+                    foreach (ApparelPolicy o in allOutfits)
                     {
                         bool assign = po.Contains(o);
                         bool assignNoChange = assign;
@@ -185,7 +185,7 @@ namespace ChangeDresser.UI
             }
         }
 
-        private void HandleOutfitAssign(bool assign, Outfit outfit, PawnOutfitTracker po)
+        private void HandleOutfitAssign(bool assign, ApparelPolicy outfit, PawnOutfitTracker po)
         {
             Pawn pawn = po.Pawn;
             if (assign)
@@ -195,7 +195,7 @@ namespace ChangeDresser.UI
             else
             {
                 po.Remove(outfit);
-                if (pawn.outfits.CurrentOutfit.Equals(outfit))
+                if (pawn.outfits.CurrentApparelPolicy.Equals(outfit))
                 {
                     bool newOutfitFound;
                     if (pawn.Drafted)

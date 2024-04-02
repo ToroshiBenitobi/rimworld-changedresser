@@ -35,12 +35,18 @@
   <ChangeDresser.ApparelGroup>Bekleidungsgruppe</ChangeDresser.ApparelGroup>
   <ChangeDresser.ApparelGroupRestrictToPawnCheckBox>Auf Kolonisten beschränken</ChangeDresser.ApparelGroupRestrictToPawnCheckBox>
   <ChangeDresser.ForceSwitchCombat>Ändern im Angriffsmodus</ChangeDresser.ForceSwitchCombat>
+  <ChangeDresser.RenameLabel>Kommode umbenennen</ChangeDresser.RenameLabel>
 
   <!-- Game UI -->
   <ChangeDresser.StoragePriority>Lagerpriorität</ChangeDresser.StoragePriority>
   <ChangeDresser.ApparelCount>Kleidungsstücke</ChangeDresser.ApparelCount>
   <ChangeDresser.ApparelGroupCount>Bekleidungsgruppe</ChangeDresser.ApparelGroupCount>
 
+
+  <ChangeDresser.ResetOptions>Optionen zurücksetzen</ChangeDresser.ResetOptions>
+  <ChangeDresser.ResetColonist>Outfits der Kolonisten zurücksetzen</ChangeDresser.ResetColonist>
+  <ChangeDresser.ClearAbsentAndRetrieveApparels>Outfits der abwesenden Kolonisten löschen und individuelle Kleidungsstücke abrufen</ChangeDresser.ClearAbsentAndRetrieveApparels>
+  
   <!-- Apparel Storage UI -->
   <ChangeDresser.CreateFromWorn>Vom Getragenen erstellen</ChangeDresser.CreateFromWorn>
   <ChangeDresser.CreateFromStorage>Vom Lager erstellen</ChangeDresser.CreateFromStorage>

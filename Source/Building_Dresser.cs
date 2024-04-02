@@ -12,16 +12,22 @@ using Verse.AI;
 
 namespace ChangeDresser
 {
-    public class Building_Dresser : Building_Storage//, IStoreSettingsParent
+    public class Building_Dresser : Building_Storage //, IStoreSettingsParent
     {
         public const long THIRTY_SECONDS = TimeSpan.TicksPerMinute / 2;
 
         public readonly JobDef changeApparelColorJobDef = DefDatabase<JobDef>.GetNamed("ChangeApparelColor", true);
-        public readonly JobDef changeApparelColorByLayerJobDef = DefDatabase<JobDef>.GetNamed("ChangeApparelColorByLayer", true);
+
+        public readonly JobDef changeApparelColorByLayerJobDef =
+            DefDatabase<JobDef>.GetNamed("ChangeApparelColorByLayer", true);
+
         public readonly JobDef changeHairStyleJobDef = DefDatabase<JobDef>.GetNamed("ChangeHairStyle", true);
         public readonly JobDef changeBodyJobDef = DefDatabase<JobDef>.GetNamed("ChangeBody", true);
         public readonly JobDef storeApparelJobDef = DefDatabase<JobDef>.GetNamed("StoreApparel", true);
-        public readonly JobDef wearApparelFromStorageJobDef = DefDatabase<JobDef>.GetNamed("WearApparelFromStorage", true);
+
+        public readonly JobDef wearApparelFromStorageJobDef =
+            DefDatabase<JobDef>.GetNamed("WearApparelFromStorage", true);
+
         public readonly JobDef changeBodyAlienColor = DefDatabase<JobDef>.GetNamed("ChangeBodyAlienColor", true);
 
         public static JobDef WEAR_APPAREL_FROM_DRESSER_JOB_DEF { get; private set; }
@@ -35,9 +41,13 @@ namespace ChangeDresser
         private Map CurrentMap { get; set; }
 
         private bool includeInTradeDeals = true;
-        public bool IncludeInTradeDeals { get { return this.includeInTradeDeals; } }
 
-		private List<Thing> forceAddedApparel = null;
+        public bool IncludeInTradeDeals
+        {
+            get { return this.includeInTradeDeals; }
+        }
+
+        private List<Thing> forceAddedApparel = null;
 
         public bool UseDresserToDressFrom = true;
 
@@ -67,6 +77,7 @@ namespace ChangeDresser
                     {
                         a.DeSpawn();
                     }
+
                     this.StoredApparel.AddApparel(a);
                 }
                 else // Not Allowed
@@ -102,9 +113,10 @@ namespace ChangeDresser
                 {
                     yield return CurrentEditorEnum.ChangeDresserAlienSkinColor;
                 }
+
                 yield return CurrentEditorEnum.ChangeDresserBody;
             }
-            
+
             if (isAlien)
             {
                 yield return CurrentEditorEnum.ChangeDresserAlienHairColor;
@@ -113,10 +125,12 @@ namespace ChangeDresser
 
         internal int GetApparelCount(ThingDef def, ThingFilter ingredientFilter)
         {
-            return this.GetApparelCount(def, ingredientFilter.AllowedQualityLevels, ingredientFilter.AllowedHitPointsPercents, ingredientFilter);
+            return this.GetApparelCount(def, ingredientFilter.AllowedQualityLevels,
+                ingredientFilter.AllowedHitPointsPercents, ingredientFilter);
         }
 
-        internal int GetApparelCount(ThingDef def, QualityRange qualityRange, FloatRange hpRange, ThingFilter ingredientFilter)
+        internal int GetApparelCount(ThingDef def, QualityRange qualityRange, FloatRange hpRange,
+            ThingFilter ingredientFilter)
         {
             return this.StoredApparel.GetApparelCount(def, qualityRange, hpRange, ingredientFilter);
         }
@@ -126,9 +140,9 @@ namespace ChangeDresser
             return this.StoredApparel.TryRemoveApparel(def, out apparel);
         }
 
-        public bool TryRemoveBestApparel(ThingDef def, ThingFilter filter, out Apparel apparel)
+        public bool TryRemoveBestApparel(ThingDef def, Pawn pawn, out Apparel apparel)
         {
-            return this.StoredApparel.TryRemoveBestApparel(def, filter, out apparel);
+            return this.StoredApparel.TryRemoveBestApparel(def, pawn, out apparel);
         }
 
         public override string Label => (this.Name == "") ? base.Label : this.Name;
@@ -146,7 +160,9 @@ namespace ChangeDresser
                 base.settings.filter.SetDisallowAll();
             }
 
-            foreach (Building_RepairChangeDresser r in BuildingUtil.FindThingsOfTypeNextTo<Building_RepairChangeDresser>(base.Map, base.Position, Settings.RepairAttachmentDistance))
+            foreach (Building_RepairChangeDresser r in
+                     BuildingUtil.FindThingsOfTypeNextTo<Building_RepairChangeDresser>(base.Map, base.Position,
+                         Settings.RepairAttachmentDistance))
             {
 #if DEBUG_REPAIR
                 Log.Warning("Adding Dresser " + this.Label + " to " + r.Label);
@@ -204,7 +220,9 @@ namespace ChangeDresser
             }
 
             WorldComp.RemoveDesser(this);
-            foreach (Building_RepairChangeDresser r in BuildingUtil.FindThingsOfTypeNextTo<Building_RepairChangeDresser>(this.CurrentMap, base.Position, Settings.RepairAttachmentDistance))
+            foreach (Building_RepairChangeDresser r in
+                     BuildingUtil.FindThingsOfTypeNextTo<Building_RepairChangeDresser>(this.CurrentMap, base.Position,
+                         Settings.RepairAttachmentDistance))
             {
 #if DEBUG_REPAIR
                 Log.Warning("Removing Dresser " + this.Label + " to " + r.Label);
@@ -257,8 +275,10 @@ namespace ChangeDresser
                             removed.Add(a as T);
                         }
                     }
+
                     ll.Clear();
                 }
+
                 this.StoredApparel.StoredApparelLookup.Clear();
                 WorldComp.ApparelColorTracker.Clear();
             }
@@ -268,12 +288,13 @@ namespace ChangeDresser
             }
         }
 
-		internal void ReclaimApparel(bool force = false)
+        internal void ReclaimApparel(bool force = false)
         {
-			if (base.Map == null)
-				return;
+            if (base.Map == null)
+                return;
 #if DEBUG
-            List<Apparel> ll = new List<Apparel>(BuildingUtil.FindThingsOfTypeNextTo<Apparel>(base.Map, base.Position, 1));
+            List<Apparel> ll =
+ new List<Apparel>(BuildingUtil.FindThingsOfTypeNextTo<Apparel>(base.Map, base.Position, 1));
             Log.Warning("Apparel found: " + ll.Count);
 #endif
             try
@@ -283,28 +304,29 @@ namespace ChangeDresser
                 {
                     foreach (Thing t in l)
                     {
-						try
-						{
-							if (t is Apparel)
-							{
-								if (!WorldComp.AddApparel((Apparel)t) &&
-									force &&
-									t.Spawned)
-								{
-									t.DeSpawn();
-									if (this.forceAddedApparel == null)
-										this.forceAddedApparel = new List<Thing>();
-									this.forceAddedApparel.Add(t);
-								}
-							}
-						}
-						catch
-						{
-							// Ignore
-						}
+                        try
+                        {
+                            if (t is Apparel)
+                            {
+                                if (!WorldComp.AddApparel((Apparel)t) &&
+                                    force &&
+                                    t.Spawned)
+                                {
+                                    t.DeSpawn();
+                                    if (this.forceAddedApparel == null)
+                                        this.forceAddedApparel = new List<Thing>();
+                                    this.forceAddedApparel.Add(t);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Ignore
+                        }
                     }
+
                     l.Clear();
-					l = null;
+                    l = null;
                 }
             }
             catch
@@ -313,7 +335,8 @@ namespace ChangeDresser
             }
         }
 
-        public bool TryGetFilteredApparel(Bill bill, ThingFilter filter, out List<Apparel> gotten, bool getOne = false, bool isForMending = false)
+        public bool TryGetFilteredApparel(Bill bill, ThingFilter filter, out List<Apparel> gotten, bool getOne = false,
+            bool isForMending = false)
         {
             gotten = null;
             foreach (KeyValuePair<ThingDef, LinkedList<Apparel>> kv in this.StoredApparel.StoredApparelLookup)
@@ -321,36 +344,39 @@ namespace ChangeDresser
                 if (bill.IsFixedOrAllowedIngredient(kv.Key) && filter.Allows(kv.Key))
                 {
                     var n = kv.Value.First;
-					while (n != null)
+                    while (n != null)
                     {
-						var next = n.Next;
-						Apparel t = n.Value;
-						if (t == null || t.Destroyed || t.HitPoints == 0)
-						{
-							kv.Value.Remove(n);
-						}
-						else if (bill.IsFixedOrAllowedIngredient(t) && filter.Allows(t))
-						{
-							if (isForMending && t.HitPoints == t.MaxHitPoints)
-							{
-								continue;
-							}
+                        var next = n.Next;
+                        Apparel t = n.Value;
+                        if (t == null || t.Destroyed || t.HitPoints == 0)
+                        {
+                            kv.Value.Remove(n);
+                        }
+                        else if (bill.IsFixedOrAllowedIngredient(t) && filter.Allows(t))
+                        {
+                            if (isForMending && t.HitPoints == t.MaxHitPoints)
+                            {
+                                continue;
+                            }
 
-							if (gotten == null)
-							{
-								gotten = new List<Apparel>();
-							}
-							gotten.Add(t);
+                            if (gotten == null)
+                            {
+                                gotten = new List<Apparel>();
+                            }
 
-							if (getOne)
-							{
-								return true;
-							}
-						}
-						n = next;
+                            gotten.Add(t);
+
+                            if (getOne)
+                            {
+                                return true;
+                            }
+                        }
+
+                        n = next;
                     }
                 }
             }
+
             return gotten != null;
         }
 
@@ -389,7 +415,7 @@ namespace ChangeDresser
 
         public override void Notify_ReceivedThing(Thing newItem)
         {
-            if (!this.AllowAdds || 
+            if (!this.AllowAdds ||
                 !(newItem is Apparel))
             {
                 DropThing(newItem);
@@ -404,11 +430,13 @@ namespace ChangeDresser
                 {
                     newItem.DeSpawn();
                 }
+
                 this.StoredApparel.AddApparel(a);
             }
         }
 
         private List<Apparel> tempApparelList = null;
+
         public override void ExposeData()
         {
 #if DEBUG
@@ -423,16 +451,17 @@ namespace ChangeDresser
             if (Scribe.mode == LoadSaveMode.Saving)
             {
                 this.tempApparelList = new List<Apparel>(this.StoredApparel.Apparel);
-				if (this.forceAddedApparel == null)
-					this.forceAddedApparel = new List<Thing>();
-			}
+                if (this.forceAddedApparel == null)
+                    this.forceAddedApparel = new List<Thing>();
+            }
 
 #if DEBUG
             Log.Warning(" Scribe_Collections.Look tempApparelList");
 #endif
-            Scribe_Collections.Look(ref this.tempApparelList, false, "apparel", LookMode.Deep, new object[0]);
+            Scribe_Collections.Look(ref this.tempApparelList, "apparel", false, LookMode.Deep, new object[0]);
             Scribe_Values.Look(ref this.includeInTradeDeals, "includeInTradeDeals", true);
-			Scribe_Collections.Look(ref this.forceAddedApparel, false, "forceAddedApparel", LookMode.Deep, new object[0]);
+            Scribe_Collections.Look(ref this.forceAddedApparel, "forceAddedApparel", false, LookMode.Deep,
+                new object[0]);
             Scribe_Values.Look(ref this.UseDresserToDressFrom, "useDresserToDressFrom", true, false);
             Scribe_Values.Look(ref this.Name, "name", "", false);
 #if DEBUG
@@ -472,8 +501,8 @@ namespace ChangeDresser
                 this.tempApparelList.Clear();
                 this.tempApparelList = null;
 
-				if (this.forceAddedApparel != null && this.forceAddedApparel.Count == 0)
-					this.forceAddedApparel = null;
+                if (this.forceAddedApparel != null && this.forceAddedApparel.Count == 0)
+                    this.forceAddedApparel = null;
             }
 
 #if DEBUG
@@ -502,13 +531,13 @@ namespace ChangeDresser
 
         public IEnumerable<Apparel> Apparel
         {
-            get
-            {
-                return this.StoredApparel.Apparel;
-            }
+            get { return this.StoredApparel.Apparel; }
         }
 
-        public int Count { get { return this.StoredApparel.Count; } }
+        public int Count
+        {
+            get { return this.StoredApparel.Count; }
+        }
 
         /// <summary>
         /// DO NOT CHANGE THIS METHOD'S SIGNATURE. IT WILL BREAK MENDING PATCH MOD
@@ -545,6 +574,7 @@ namespace ChangeDresser
             {
                 this.AllowAdds = true;
             }
+
             return false;
         }
 
@@ -587,19 +617,22 @@ namespace ChangeDresser
                 }
             }*/
 
-			if (this.forceAddedApparel != null && this.forceAddedApparel.Count > 0)
-			{
+            if (this.forceAddedApparel != null && this.forceAddedApparel.Count > 0)
+            {
                 foreach (Thing t in this.forceAddedApparel)
                 {
                     try
                     {
                         this.DropThing(t, false);
                     }
-                    catch { }
+                    catch
+                    {
+                    }
                 }
-				this.forceAddedApparel.Clear();
-				this.forceAddedApparel = null;
-			}
+
+                this.forceAddedApparel.Clear();
+                this.forceAddedApparel = null;
+            }
 
             /*long now = DateTime.Now.Millisecond;
             if (now - this.lastAutoCollect > THIRTY_SECONDS)
@@ -615,7 +648,8 @@ namespace ChangeDresser
             }
         }
 
-#region Float Menu Options
+        #region Float Menu Options
+
         public override IEnumerable<FloatMenuOption> GetFloatMenuOptions(Pawn pawn)
         {
             bool isAlien = AlienRaceUtil.IsAlien(pawn);
@@ -640,6 +674,7 @@ namespace ChangeDresser
                         }));
                 }
             }
+
             if (!isAlien || AlienRaceUtil.HasHair(pawn))
             {
                 list.Add(new FloatMenuOption(
@@ -650,6 +685,7 @@ namespace ChangeDresser
                         pawn.jobs.TryTakeOrderedJob(job);
                     }));
             }
+
             if (Settings.ShowBodyChange)
             {
                 list.Add(new FloatMenuOption(
@@ -671,6 +707,7 @@ namespace ChangeDresser
                         }));
                 }
             }
+
             if (pawn.apparel?.LockedApparel?.Count == 0)
             {
                 list.Add(new FloatMenuOption(
@@ -681,142 +718,135 @@ namespace ChangeDresser
                         pawn.jobs.TryTakeOrderedJob(job);
                     }));
             }
+
             return list;
         }
-#endregion
 
-        public bool FindBetterApparel(ref float baseApparelScore, ref Apparel betterApparel, Pawn pawn, Outfit currentOutfit)
+        #endregion
+
+        public bool FindBetterApparel(ref float baseApparelScore, ref Apparel betterApparel, Pawn pawn,
+            ApparelPolicy currentOutfit)
         {
-            return this.StoredApparel.FindBetterApparel(ref baseApparelScore, ref betterApparel, pawn, currentOutfit, this);
+            return this.StoredApparel.FindBetterApparel(ref baseApparelScore, ref betterApparel, pawn, currentOutfit,
+                this);
         }
 
-#region Gizmos
-         public override IEnumerable<Gizmo> GetGizmos()
-         {
-             IEnumerable<Gizmo> enumerables = base.GetGizmos();
+        #region Gizmos
 
-             List<Gizmo> l;
-             if (enumerables != null)
-                 l = new List<Gizmo>(enumerables);
-             else
-                 l = new List<Gizmo>(1);
+        public override IEnumerable<Gizmo> GetGizmos()
+        {
+            IEnumerable<Gizmo> enumerables = base.GetGizmos();
 
-             int groupKey = this.GetType().Name.GetHashCode();
+            List<Gizmo> l;
+            if (enumerables != null)
+                l = new List<Gizmo>(enumerables);
+            else
+                l = new List<Gizmo>(1);
 
-             l.Add(new Command_Action
-             {
-                 icon = ContentFinder<Texture2D>.Get("UI/Commands/RenameZone", true),
-                 defaultLabel = "CommandRenameZoneLabel".Translate(),
-                 action = delegate
-                 {
-                     Find.WindowStack.Add(new Dialog_Rename(this));
-                 },
-             });
+            int groupKey = this.GetType().Name.GetHashCode();
 
-             Command_Action a = new Command_Action();
-             a.icon = WidgetUtil.manageapparelTexture;
-             a.defaultDesc = "ChangeDresser.ManageApparelDesc".Translate();
-             a.defaultLabel = "ChangeDresser.ManageApparel".Translate();
-             a.activateSound = SoundDef.Named("Click");
-             a.action = delegate { Find.WindowStack.Add(new UI.StorageUI(this, null)); };
-             a.groupKey = groupKey;
-             ++groupKey;
-             l.Add(a);
+            // l.Add(new Command_Action
+            // {
+            //     icon = ContentFinder<Texture2D>.Get("UI/Commands/RenameZone", true),
+            //     defaultLabel = "CommandRenameZoneLabel".Translate(),
+            //     action = delegate { Find.WindowStack.Add(new Dialog_Rename(this)); },
+            // });
 
-             a = new Command_Action();
-             a.icon = WidgetUtil.assignweaponsTexture;
-             a.defaultDesc = "ChangeDresser.AssignOutfitsDesc".Translate();
-             a.defaultLabel = "ChangeDresser.AssignOutfits".Translate();
-             a.activateSound = SoundDef.Named("Click");
-             a.action = delegate { Find.WindowStack.Add(new UI.AssignOutfitUI(this)); };
-             a.groupKey = groupKey;
-             ++groupKey;
-             l.Add(a);
+            Command_Action a = new Command_Action();
+            a.icon = WidgetUtil.manageapparelTexture;
+            a.defaultDesc = "ChangeDresser.ManageApparelDesc".Translate();
+            a.defaultLabel = "ChangeDresser.ManageApparel".Translate();
+            a.activateSound = SoundDef.Named("Click");
+            a.action = delegate { Find.WindowStack.Add(new UI.StorageUI(this, null)); };
+            a.groupKey = groupKey;
+            ++groupKey;
+            l.Add(a);
 
-             a = new Command_Action();
-             a.icon = WidgetUtil.customapparelTexture;
-             a.defaultDesc = "ChangeDresser.CustomOutfitsDesc".Translate();
-             a.defaultLabel = "ChangeDresser.CustomOutfits".Translate();
-             a.activateSound = SoundDef.Named("Click");
-             a.action = delegate { Find.WindowStack.Add(new UI.CustomOutfitUI(this)); };
-             a.groupKey = groupKey;
-             ++groupKey;
-             l.Add(a);
+            a = new Command_Action();
+            a.icon = WidgetUtil.assignweaponsTexture;
+            a.defaultDesc = "ChangeDresser.AssignOutfitsDesc".Translate();
+            a.defaultLabel = "ChangeDresser.AssignOutfits".Translate();
+            a.activateSound = SoundDef.Named("Click");
+            a.action = delegate { Find.WindowStack.Add(new UI.AssignOutfitUI(this)); };
+            a.groupKey = groupKey;
+            ++groupKey;
+            l.Add(a);
 
-             a = new Command_Action();
-             a.icon = WidgetUtil.emptyTexture;
-             a.defaultDesc = "ChangeDresser.EmptyDesc".Translate();
-             a.defaultLabel = "ChangeDresser.Empty".Translate();
-             a.activateSound = SoundDef.Named("Click");
-             a.action =
-                 delegate
-                 {
-                     this.Empty<Apparel>();
-                 };
-             a.groupKey = groupKey;
-             ++groupKey;
-             l.Add(a);
+            a = new Command_Action();
+            a.icon = WidgetUtil.customapparelTexture;
+            a.defaultDesc = "ChangeDresser.CustomOutfitsDesc".Translate();
+            a.defaultLabel = "ChangeDresser.CustomOutfits".Translate();
+            a.activateSound = SoundDef.Named("Click");
+            a.action = delegate { Find.WindowStack.Add(new UI.CustomOutfitUI(this)); };
+            a.groupKey = groupKey;
+            ++groupKey;
+            l.Add(a);
 
-             a = new Command_Action();
-             a.icon = WidgetUtil.collectTexture;
-             a.defaultDesc = "ChangeDresser.CollectDesc".Translate();
-             a.defaultLabel = "ChangeDresser.Collect".Translate();
-             a.activateSound = SoundDef.Named("Click");
-             a.action =
-                 delegate
-                 {
-                     this.ReclaimApparel();
-                 };
-             a.groupKey = groupKey;
-             ++groupKey;
-             l.Add(a);
+            a = new Command_Action();
+            a.icon = WidgetUtil.emptyTexture;
+            a.defaultDesc = "ChangeDresser.EmptyDesc".Translate();
+            a.defaultLabel = "ChangeDresser.Empty".Translate();
+            a.activateSound = SoundDef.Named("Click");
+            a.action =
+                delegate { this.Empty<Apparel>(); };
+            a.groupKey = groupKey;
+            ++groupKey;
+            l.Add(a);
 
-             a = new Command_Action();
-             if (this.includeInTradeDeals)
-             {
-                 a.icon = WidgetUtil.yesSellTexture;
-             }
-             else
-             {
-                 a.icon = WidgetUtil.noSellTexture;
-             }
-             a.defaultDesc = "ChangeDresser.IncludeInTradeDealsDesc".Translate();
-             a.defaultLabel = "ChangeDresser.IncludeInTradeDeals".Translate();
-             a.activateSound = SoundDef.Named("Click");
-             a.action =
-                 delegate
-                 {
-                     this.includeInTradeDeals = !this.includeInTradeDeals;
-                 };
-             a.groupKey = groupKey;
-             ++groupKey;
-             l.Add(a);
+            a = new Command_Action();
+            a.icon = WidgetUtil.collectTexture;
+            a.defaultDesc = "ChangeDresser.CollectDesc".Translate();
+            a.defaultLabel = "ChangeDresser.Collect".Translate();
+            a.activateSound = SoundDef.Named("Click");
+            a.action =
+                delegate { this.ReclaimApparel(); };
+            a.groupKey = groupKey;
+            ++groupKey;
+            l.Add(a);
 
-             a = new Command_Action();
-             if (this.UseDresserToDressFrom)
-             {
-                 a.icon = WidgetUtil.yesDressFromTexture;
-             }
-             else
-             {
-                 a.icon = WidgetUtil.noDressFromTexture;
-             }
-             a.defaultDesc = "ChangeDresser.UseDresserToDressFromDesc".Translate();
-             a.defaultLabel = "ChangeDresser.UseDresserToDressFrom".Translate();
-             a.activateSound = SoundDef.Named("Click");
-             a.action =
-                 delegate
-                 {
-                     this.UseDresserToDressFrom = !this.UseDresserToDressFrom;
-                 };
-             a.groupKey = groupKey;
-             ++groupKey;
-             l.Add(a);
+            a = new Command_Action();
+            if (this.includeInTradeDeals)
+            {
+                a.icon = WidgetUtil.yesSellTexture;
+            }
+            else
+            {
+                a.icon = WidgetUtil.noSellTexture;
+            }
 
-             // return SaveStorageSettingsGizmoUtil.AddSaveLoadGizmos(l, SaveTypeEnum.Apparel_Management, this.settings.filter);
-             return l;
-         }
-#endregion
+            a.defaultDesc = "ChangeDresser.IncludeInTradeDealsDesc".Translate();
+            a.defaultLabel = "ChangeDresser.IncludeInTradeDeals".Translate();
+            a.activateSound = SoundDef.Named("Click");
+            a.action =
+                delegate { this.includeInTradeDeals = !this.includeInTradeDeals; };
+            a.groupKey = groupKey;
+            ++groupKey;
+            l.Add(a);
+
+            a = new Command_Action();
+            if (this.UseDresserToDressFrom)
+            {
+                a.icon = WidgetUtil.yesDressFromTexture;
+            }
+            else
+            {
+                a.icon = WidgetUtil.noDressFromTexture;
+            }
+
+            a.defaultDesc = "ChangeDresser.UseDresserToDressFromDesc".Translate();
+            a.defaultLabel = "ChangeDresser.UseDresserToDressFrom".Translate();
+            a.activateSound = SoundDef.Named("Click");
+            a.action =
+                delegate { this.UseDresserToDressFrom = !this.UseDresserToDressFrom; };
+            a.groupKey = groupKey;
+            ++groupKey;
+            l.Add(a);
+
+            // return SaveStorageSettingsGizmoUtil.AddSaveLoadGizmos(l, SaveTypeEnum.Apparel_Management, this.settings.filter);
+            return l;
+        }
+
+        #endregion
 
 /*#region ThingFilters
         private ThingFilter previousStorageFilters = new ThingFilter();

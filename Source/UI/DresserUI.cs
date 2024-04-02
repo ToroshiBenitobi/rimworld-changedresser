@@ -63,7 +63,7 @@ namespace ChangeDresser.UI
         {
             base.PostClose();
             Prefs.HatsOnlyOnMap = this.originalHatsHideSetting;
-            this.dresserDto.Pawn.Drawer.renderer.graphics.ResolveAllGraphics();
+            this.dresserDto.Pawn.Drawer.renderer.SetAllGraphicsDirty();
             PortraitsCache.SetDirty(this.dresserDto.Pawn);
         }
 
@@ -73,7 +73,7 @@ namespace ChangeDresser.UI
             {
                 if (this.rerenderPawn)
                 {
-                    this.dresserDto.Pawn.Drawer.renderer.graphics.ResolveAllGraphics();
+                    this.dresserDto.Pawn.Drawer.renderer.SetAllGraphicsDirty();
                     PortraitsCache.SetDirty(this.dresserDto.Pawn);
                     this.rerenderPawn = false;
                 }

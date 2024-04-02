@@ -26,7 +26,7 @@ namespace ChangeDresser.DresserJobDriver
                     Pawn pawn = this.GetActor();
 
                     Thing t = this.TargetB.Thing;
-                    if (t is Apparel && 
+                    if (t is Apparel && ((Apparel)t).PawnCanWear(pawn, true) &&
                         dresser.RemoveNoDrop((Apparel)t))
                     {
                         List<Apparel> worn = new List<Apparel>(pawn.apparel.WornApparel);

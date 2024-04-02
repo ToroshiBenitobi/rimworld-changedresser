@@ -122,11 +122,11 @@ namespace ChangeDresser
             }
 
 #if TRACE && SWAP_APPAREL
-            Log.Warning("    Previous Outfit was: " + pawn.outfits.CurrentOutfit.label);
+            Log.Warning("    Previous Outfit was: " + pawn.outfits.CurrentApparelPolicy.label);
 #endif
-            pawn.outfits.CurrentOutfit = toWear;
+            pawn.outfits.CurrentApparelPolicy = toWear;
 #if TRACE && SWAP_APPAREL
-            Log.Warning("    Current Outfit is now: " + pawn.outfits.CurrentOutfit.label);
+            Log.Warning("    Current Outfit is now: " + pawn.outfits.CurrentApparelPolicy.label);
 #endif
 
             typeof(JobGiver_OptimizeApparel)
@@ -457,7 +457,7 @@ namespace ChangeDresser
 #endif
 #if DEBUG
                         if (i == WAIT)
-                            Log.Warning("DraftController.Postfix: Set: " + o.Label + ", Current Oufit: " + pawn.outfits.CurrentOutfit.label);
+                            Log.Warning("DraftController.Postfix: Set: " + o.Label + ", Current Oufit: " + pawn.outfits.CurrentApparelPolicy.label);
 #endif
                         Command_Action a = new Command_Action();
                         ThingDef icon = o.Icon;
@@ -470,7 +470,7 @@ namespace ChangeDresser
                             a.icon = WidgetUtil.noneTexture;
                         }
                         StringBuilder sb = new StringBuilder();
-                        if (!pawn.outfits.CurrentOutfit.Equals(o))
+                        if (!pawn.outfits.CurrentApparelPolicy.Equals(o))
                         {
                             sb.Append("ChangeDresser.ChangeTo".Translate());
                             a.defaultDesc = "ChangeDresser.ChangeToDesc".Translate();
@@ -618,7 +618,7 @@ namespace ChangeDresser
                 Log.Message("        Dresser: " + dresser.Label);
 #endif
                 float score = baseApparelScore;
-                if (dresser.FindBetterApparel(ref score, ref a, pawn, pawn.outfits.CurrentOutfit))
+                if (dresser.FindBetterApparel(ref score, ref a, pawn, pawn.outfits.CurrentApparelPolicy))
                 {
                     apparel = a;
                     baseApparelScore = score;
@@ -911,14 +911,14 @@ namespace ChangeDresser
     [HarmonyPatch(typeof(OutfitDatabase), "TryDelete")]
     static class Patch_OutfitDatabase_TryDelete
     {
-        static void Postfix(AcceptanceReport __result, Outfit outfit)
+        static void Postfix(AcceptanceReport __result, ApparelPolicy apparelPolicy)
         {
             if (__result.Accepted)
             {
-                WorldComp.OutfitsForBattle.Remove(outfit);
+                WorldComp.OutfitsForBattle.Remove(apparelPolicy);
                 foreach (PawnOutfitTracker po in WorldComp.PawnOutfits.Values)
                 {
-                    po.Remove(outfit);
+                    po.Remove(apparelPolicy);
                 }
             }
         }

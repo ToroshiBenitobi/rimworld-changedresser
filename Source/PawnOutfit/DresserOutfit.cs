@@ -26,7 +26,7 @@ namespace ChangeDresser
         private string uniqueId;
         public List<Apparel> Apparel = new List<Apparel>();
         public string Name = "";
-        public Outfit Outfit = null;
+        public ApparelPolicy Outfit = null;
 
         public CustomOutfit() { }
 
@@ -66,7 +66,7 @@ namespace ChangeDresser
 
             if (this.Outfit != null)
             {
-                pawn.outfits.CurrentOutfit = this.Outfit;
+                pawn.outfits.CurrentApparelPolicy = this.Outfit;
                 ApparelUtil.OptimizeApparel(pawn);
             }
 
@@ -184,9 +184,9 @@ namespace ChangeDresser
             Scribe_Values.Look<OutfitType>(ref this.outfitType, "type");
             Scribe_Values.Look<bool>(ref this.isBeingWorn, "isBeingWorn", false, false);
             Scribe_Values.Look<string>(ref this.uniqueId, "uniqueId");
-            Scribe_References.Look<Outfit>(ref this.Outfit, "outfit");
+            Scribe_References.Look<ApparelPolicy>(ref this.Outfit, "outfit");
 
-            Scribe_Collections.Look<Apparel>(ref this.Apparel, false, "apparel", LookMode.Reference, new object[0]);
+            Scribe_Collections.Look<Apparel>(ref this.Apparel,  "apparel", false, LookMode.Reference, new object[0]);
         }
 
         public bool IsValid()
@@ -221,11 +221,11 @@ namespace ChangeDresser
         private bool isBeingWorn = false;
         private string uniqueId;
         private OutfitType outfitType = OutfitType.Civilian;
-        public Outfit Outfit;
+        public ApparelPolicy Outfit;
 
         public DefinedOutfit() { }
 
-        public DefinedOutfit(Outfit outfit, OutfitType outfitType)
+        public DefinedOutfit(ApparelPolicy outfit, OutfitType outfitType)
         {
 #if DRESSER_OUTFIT
             Log.Warning("Begin DefinedOutfit(Outfit: " + outfit.label + ", OutfitType: " + outfitType + ")");
@@ -244,9 +244,9 @@ namespace ChangeDresser
 #endif
             List<Apparel> removed = ApparelUtil.RemoveApparel(pawn);
             ApparelUtil.StoreApparelInWorldDresser(removed, pawn);
-            pawn.outfits.CurrentOutfit = this.Outfit;
+            pawn.outfits.CurrentApparelPolicy = this.Outfit;
 #if DRESSER_OUTFIT
-            Log.Message("     Pawn's outfit is now: " + pawn.outfits.CurrentOutfit.label);
+            Log.Message("     Pawn's outfit is now: " + pawn.outfits.CurrentApparelPolicy.label);
 #endif
             /*
             bool done = false;
@@ -308,7 +308,7 @@ Log.Warning("End DefinedOutfit.Undress");
         {
             Scribe_Values.Look<bool>(ref this.isBeingWorn, "isBeingWorn", false, false);
             Scribe_Values.Look<OutfitType>(ref this.outfitType, "type");
-            Scribe_References.Look<Outfit>(ref this.Outfit, "outfit");
+            Scribe_References.Look<ApparelPolicy>(ref this.Outfit, "outfit");
             Scribe_Values.Look<string>(ref this.uniqueId, "uniqueId");
         }
 

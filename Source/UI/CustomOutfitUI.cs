@@ -19,7 +19,7 @@ namespace ChangeDresser.UI
         private Vector2 scrollPosLeft = new Vector2(0, 0);
         private Vector2 scrollPosRight = new Vector2(0, 0);
         private List<Pawn> selectablePawns = new List<Pawn>();
-        private List<Outfit> selectableOutfits = new List<Outfit>();
+        private List<ApparelPolicy> selectableOutfits = new List<ApparelPolicy>();
         private List<Apparel> availableApparel = new List<Apparel>();
 
         private const int HEIGHT = 35;
@@ -409,7 +409,7 @@ namespace ChangeDresser.UI
                     {
                         this.customOutfit.Outfit = null;
                     }, MenuOptionPriority.Default, null, null, 0f, null, null));
-                    foreach (Outfit o in Current.Game.outfitDatabase.AllOutfits)
+                    foreach (ApparelPolicy o in Current.Game.outfitDatabase.AllOutfits)
                     {
                         options.Add(new FloatMenuOption(o.label, delegate
                         {

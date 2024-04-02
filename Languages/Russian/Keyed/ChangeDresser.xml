@@ -34,7 +34,13 @@
 	<ChangeDresser.HairStyle>Прическа</ChangeDresser.HairStyle>
 	<ChangeDresser.AgeBiological>Возраст</ChangeDresser.AgeBiological>
 	<ChangeDresser.AgeChronological>Псих. возраст</ChangeDresser.AgeChronological>
-		
+
+	<ChangeDresser.ResetOptions>Сбросить настройки</ChangeDresser.ResetOptions>
+	<ChangeDresser.ResetColonist>Сбросить наряды колонистов</ChangeDresser.ResetColonist>
+	<ChangeDresser.ClearAbsentAndRetrieveApparels>Очистить наряды отсутствующих колонистов и восстановить индивидуальные одежды</ChangeDresser.ClearAbsentAndRetrieveApparels>
+	<ChangeDresser.RenameLabel>Переименовать комод</ChangeDresser.RenameLabel>
+
+
 	<!-- Apparel Group UI -->
 	<ChangeDresser.ApparelGroupOwner>Хозяин</ChangeDresser.ApparelGroupOwner>
 	<ChangeDresser.ApparelGroupName>Имя группы</ChangeDresser.ApparelGroupName>

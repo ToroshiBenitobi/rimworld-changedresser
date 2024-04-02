@@ -1,5 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
+	<!-- New for 1.3 -->
+	<ChangeDresserFavoriteColor>Favorite Color</ChangeDresserFavoriteColor>
+	<ChangeDresser.ChangeFavoriteColor>Change Favorite Color</ChangeDresser.ChangeFavoriteColor>
+	<ChangeDresser.BeardStyle>Beard Style</ChangeDresser.BeardStyle>
+	
 	<!-- Window Labels -->
 	<ChangeDresser.DresserLabel>Dresser</ChangeDresser.DresserLabel>
 	<ChangeDresser.ApparelStorageLabel>Apparel Storage</ChangeDresser.ApparelStorageLabel>
@@ -26,6 +31,7 @@
 	<ChangeDresser.UseDresserToDressFrom>Dress From</ChangeDresser.UseDresserToDressFrom>
 	<ChangeDresser.UseDresserToDressFromDesc>Allows pawns to remove apparel from this dresser (disable on dump dressers to improve performance)</ChangeDresser.UseDresserToDressFromDesc>
 	<ChangeDresser.UseDresser>Use Dresser</ChangeDresser.UseDresser>
+	<ChangeDresser.RenameLabel>Rename Dresser</ChangeDresser.RenameLabel>
 	
 	<!-- Common Strings -->
 	<ChangeDresser.Worn>Worn</ChangeDresser.Worn>
@@ -55,12 +61,16 @@
 	<ChangeDresser.AlienSecondarySkinColor>Secondary Skin Color</ChangeDresser.AlienSecondarySkinColor>
 	<ChangeDresser.AlienPrimaryHairColor>Primary Hair Color</ChangeDresser.AlienPrimaryHairColor>
 	<ChangeDresser.AlienSecondaryHairColor>Secondary Hair Color</ChangeDresser.AlienSecondaryHairColor>
+	<ChangeDresser.SelectPawn>Select Pawn</ChangeDresser.SelectPawn>
 		
 	<!-- Assign Outfits UI -->
 	<ChangeDresser.ManageOutfits>Manage Outfits</ChangeDresser.ManageOutfits>
 	<ChangeDresser.UseForBattle>Use In Battle</ChangeDresser.UseForBattle>
 	<ChangeDresser.AvailableApparel>Available Apparel</ChangeDresser.AvailableApparel>
 	<ChangeDresser.CustomOutfitApparel>Custom Outfit Apparel</ChangeDresser.CustomOutfitApparel>
+	<ChangeDresser.ResetOptions>Reset Options</ChangeDresser.ResetOptions>
+	<ChangeDresser.ResetColonist>Reset Colonists' Outfits</ChangeDresser.ResetColonist>
+	<ChangeDresser.ClearAbsentAndRetrieveApparels>Clear Absent Colonists' Outfits And Retrieve Custom Apparels</ChangeDresser.ClearAbsentAndRetrieveApparels>
 	
 	<!-- Custom Outfit UI -->
 	<ChangeDresser.OutfitName>Name</ChangeDresser.OutfitName>
@@ -125,7 +135,15 @@
 	<Shell>Shell</Shell>
 	<Belt>Belt</Belt>
 	<Overhead>Overhead</Overhead>
+	<EyeCover>Eye Cover</EyeCover>
 
 	<ChangeDresser.All>All</ChangeDresser.All>
 	<ChangeDresser.Name>Name</ChangeDresser.Name>
+	
+	<!-- Sort -->
+	<ChangeDresser.StorageOrder>Storage Order</ChangeDresser.StorageOrder>
+	<ChangeDresser.DressFromOrder>Dress From Order</ChangeDresser.DressFromOrder>
+	<ChangeDresser.StorageOrderDesc>Change the dresser priority order from which colonists will store and dress apparel.</ChangeDresser.StorageOrderDesc>
+	<ChangeDresser.SortApparel>Sort Apparel</ChangeDresser.SortApparel>
+	<ChangeDresser.SaveFirst>Please save first incase there's an issue and apparel is lost. Contiue?</ChangeDresser.SaveFirst>
 </LanguageData>

@@ -20,6 +20,7 @@
 	<ChangeDresser.Delete>Supprimer</ChangeDresser.Delete>
 	<ChangeDresser.SelectAll>Sélectionner tout</ChangeDresser.SelectAll>
 	<ChangeDresser.DeselectAll>Désélectionner tout</ChangeDresser.DeselectAll>
+	<ChangeDresser.RenameLabel>Renommer la commode</ChangeDresser.RenameLabel>
 	
 	<!-- Editor Names (top selection bar in the Dresser window) -->
 	<ChangeDresserHair>Cheveux Style/Couleur</ChangeDresserHair>
@@ -42,6 +43,11 @@
 	<ChangeDresser.ApparelGroupRestrictToPawnCheckBox>Restreindre à un Pion</ChangeDresser.ApparelGroupRestrictToPawnCheckBox>
 	<ChangeDresser.ForceSwitchCombat>Changer une fois appelé</ChangeDresser.ForceSwitchCombat>
 	
+	<ChangeDresser.ResetOptions>Réinitialiser les options</ChangeDresser.ResetOptions>
+	<ChangeDresser.ResetColonist>Réinitialiser les tenues des colons</ChangeDresser.ResetColonist>
+	<ChangeDresser.ClearAbsentAndRetrieveApparels>Effacer les tenues des colons absents et récupérer les tenues personnalisées</ChangeDresser.ClearAbsentAndRetrieveApparels>
+
+
 	<!-- Game UI -->
 	<ChangeDresser.StoragePriority>Priorité du rangement</ChangeDresser.StoragePriority>
 	<ChangeDresser.ApparelCount>Habillement</ChangeDresser.ApparelCount>

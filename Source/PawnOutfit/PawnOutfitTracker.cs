@@ -458,7 +458,7 @@ namespace ChangeDresser
 #endif
         }
 
-        public bool Contains(Outfit outfit)
+        public bool Contains(ApparelPolicy outfit)
         {
             foreach (DefinedOutfit o in this.DefinedOutfits)
             {
@@ -468,7 +468,7 @@ namespace ChangeDresser
             return false;
         }
 
-        public void Remove(Outfit outfit)
+        public void Remove(ApparelPolicy outfit)
         {
 #if DRESSER_OUTFIT
             Log.Warning("Begin PawnOutfitTracker.Remove(Outfit: " + outfit.label + ")");
@@ -541,7 +541,7 @@ namespace ChangeDresser
             this.customApparel.Remove(apparel);
         }
 
-        public void UpdateOutfitType(Outfit outfit, OutfitType outfitType)
+        public void UpdateOutfitType(ApparelPolicy outfit, OutfitType outfitType)
         {
 #if DRESSER_OUTFIT
             Log.Warning("Begin PawnOutfitTracker.UpdateOutfitType(Outfit: " + outfit.label + " OutfitType: " + outfitType + ")");
@@ -624,7 +624,7 @@ namespace ChangeDresser
             Scribe_Collections.Look(ref this.DefinedOutfits, "definedOutfits", LookMode.Deep, new object[0]);
             Scribe_Collections.Look(ref this.CustomOutfits, "customOutfits", LookMode.Deep, new object[0]);
             Scribe_Collections.Look(ref this.ApparelColors, "apparelColors", LookMode.Deep, new object[0]);
-            Scribe_Collections.Look(ref this.customApparel, false, "customApparel", LookMode.Deep, new object[0]);
+            Scribe_Collections.Look(ref this.customApparel, "customApparel", false, LookMode.Deep, new object[0]);
 
             Scribe_Values.Look(ref this.currentlyWorn, "currentlyWorn");
             Scribe_Values.Look(ref this.lastBattleOutfit, "lastBattleOutfit");

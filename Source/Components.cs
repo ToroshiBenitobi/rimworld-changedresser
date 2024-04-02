@@ -11,8 +11,8 @@ namespace ChangeDresser
         public static LinkedList<Building_Dresser> DressersToUse { get; private set; }
 
         public static Dictionary<Pawn, PawnOutfitTracker> PawnOutfits { get; private set; }
-        public static List<Outfit> OutfitsForBattle { get; private set; }
-        public static OutfitType GetOutfitType(Outfit outfit) { return OutfitsForBattle.Contains(outfit) ? OutfitType.Battle : OutfitType.Civilian; }
+        public static List<ApparelPolicy> OutfitsForBattle { get; private set; }
+        public static OutfitType GetOutfitType(ApparelPolicy outfit) { return OutfitsForBattle.Contains(outfit) ? OutfitType.Battle : OutfitType.Civilian; }
         public static ApparelColorTracker ApparelColorTracker = new ApparelColorTracker();
 
         private static int nextDresserOutfitId = 0;
@@ -57,7 +57,7 @@ namespace ChangeDresser
             }
             else
             {
-                OutfitsForBattle = new List<Outfit>();
+                OutfitsForBattle = new List<ApparelPolicy>();
             }
         }
 
@@ -217,7 +217,7 @@ namespace ChangeDresser
             Scribe_Collections.Look(ref this.tempPawnOutfits, "pawnOutfits", LookMode.Deep, new object[0]);
             Scribe_Deep.Look(ref ApparelColorTracker, "apparelColorTrack");
 
-            List<Outfit> ofb = OutfitsForBattle;
+            List<ApparelPolicy> ofb = OutfitsForBattle;
             Scribe_Collections.Look(ref ofb, "outfitsForBattle", LookMode.Reference, new object[0]);
             OutfitsForBattle = ofb;
 
@@ -230,7 +230,7 @@ namespace ChangeDresser
 
                 if (OutfitsForBattle == null)
                 {
-                    OutfitsForBattle = new List<Outfit>();
+                    OutfitsForBattle = new List<ApparelPolicy>();
                 }
 
                 PawnOutfits.Clear();
