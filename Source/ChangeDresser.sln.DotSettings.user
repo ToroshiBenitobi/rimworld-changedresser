@@ -22,6 +22,7 @@
   &lt;Assembly Path="C:\SteamLibrary\steamapps\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll" /&gt;&#xD;
   &lt;Assembly Path="H:\Archive\C#\rimworld1.5\Assembly-CSharp.dll" /&gt;&#xD;
   &lt;Assembly Path="H:\Archive\C#\rimworld1.4\Assembly-CSharp.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\SteamLibrary\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Assembly-CSharp.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Boolean x:Key="/Default/Environment/Hierarchy/Build/BuildTool/RecentDotNetCliExePaths/=C_003A_005CProgram_0020Files_005Cdotnet_005Cdotnet_002Eexe/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/DotNetCliExePath/@EntryValue">C:\Program Files\dotnet\dotnet.exe</s:String>

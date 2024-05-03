@@ -60,6 +60,11 @@ namespace ChangeDresser
 
         public static void OptimizeApparel(Pawn pawn)
         {
+            if (pawn == null)
+            {
+                Log.Warning("OptimizeApparel called with a null Pawn.");
+                return; // Exit the method if pawn is null to prevent further errors.
+            }
             bool hasDressers = WorldComp.HasDressers(pawn.Map);
             if (hasDressers)
             {
@@ -116,8 +121,6 @@ namespace ChangeDresser
 #if TRACE && DRESSER_OUTFIT
                     Log.Message("Wear from dresser " + d.Label + " " + a.Label);
 #endif
-                        Log.Message("Wear from dresser " + d.Label + " " + a.Label);
-                        Log.Message("Can Wear " + a.PawnCanWear(pawn, true));
                         if (a.PawnCanWear(pawn, true))
                         {
                             d.RemoveNoDrop(a);
@@ -143,6 +146,10 @@ namespace ChangeDresser
 #if TRACE && SWAP_APPAREL
                     Log.Warning("        Try Find Def " + def.label);
 #endif
+                    if (def == null)
+                    {
+                        continue;
+                    }
                     if (pawn.apparel.CanWearWithoutDroppingAnything(def))
                     {
 #if TRACE && SWAP_APPAREL

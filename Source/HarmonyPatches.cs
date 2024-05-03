@@ -50,6 +50,7 @@ namespace ChangeDresser
         }
 
         #region Old SwapApparel
+
         /*public static void SwapApparel(Pawn pawn, Outfit toWear)
         {
 #if SWAP_APPAREL
@@ -242,6 +243,7 @@ namespace ChangeDresser
             Log.Message("End Main.SwapApparel" + Environment.NewLine);
 #endif
         }*/
+
         #endregion
     }
 
@@ -282,7 +284,9 @@ namespace ChangeDresser
         static void Postfix(Pawn __instance, ref IEnumerable<Gizmo> __result)
         {
             List<Gizmo> l = new List<Gizmo>();
-            if ((__instance.IsPrisoner || (Settings.ShowDresserButtonForPawns && __instance.Faction == Faction.OfPlayer && __instance.def.race.Humanlike)) && WorldComp.HasDressers())
+            if ((__instance.IsPrisoner || (Settings.ShowDresserButtonForPawns &&
+                                           __instance.Faction == Faction.OfPlayer && __instance.def.race.Humanlike)) &&
+                WorldComp.HasDressers())
             {
                 bool isAlien = AlienRaceUtil.IsAlien(__instance);
                 l.Add(new Command_Action
@@ -294,55 +298,71 @@ namespace ChangeDresser
                     {
                         List<FloatMenuOption> options = new List<FloatMenuOption>(6)
                         {
-                                new FloatMenuOption("ChangeDresser.Wearing".Translate(), delegate() {
-                                        Find.WindowStack.Add(new StorageUI(__instance));
-                                    }),
-                                new FloatMenuOption("ChangeDresser.ChangeApparelColors".Translate(), delegate() {
-                                        Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserApparelColor)));
-                                    })
+                            new FloatMenuOption("ChangeDresser.Wearing".Translate(),
+                                delegate() { Find.WindowStack.Add(new StorageUI(__instance)); }),
+                            new FloatMenuOption("ChangeDresser.ChangeApparelColors".Translate(),
+                                delegate()
+                                {
+                                    Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null,
+                                        CurrentEditorEnum.ChangeDresserApparelColor)));
+                                })
                         };
                         if (Settings.IncludeColorByLayer)
                         {
-                            options.Add(new FloatMenuOption("ChangeDresser.ChangeApparelColorsByLayer".Translate(), delegate ()
-                            {
-                                Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserApparelLayerColor)));
-                            }));
+                            options.Add(new FloatMenuOption("ChangeDresser.ChangeApparelColorsByLayer".Translate(),
+                                delegate()
+                                {
+                                    Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null,
+                                        CurrentEditorEnum.ChangeDresserApparelLayerColor)));
+                                }));
                         }
+
                         if (!isAlien || AlienRaceUtil.HasHair(__instance))
                         {
-                            options.Add(new FloatMenuOption("ChangeDresser.ChangeHair".Translate(), delegate ()
-                            {
-                                Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserHair)));
-                            }));
+                            options.Add(new FloatMenuOption("ChangeDresser.ChangeHair".Translate(),
+                                delegate()
+                                {
+                                    Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null,
+                                        CurrentEditorEnum.ChangeDresserHair)));
+                                }));
                         }
+
                         if (isAlien && AlienRaceUtil.HasHair(__instance))
                         {
-                            options.Add(new FloatMenuOption("ChangeDresser.ChangeAlienHairColor".Translate(), delegate ()
-                            {
-                                Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserAlienHairColor)));
-                            }));
+                            options.Add(new FloatMenuOption("ChangeDresser.ChangeAlienHairColor".Translate(),
+                                delegate()
+                                {
+                                    Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null,
+                                        CurrentEditorEnum.ChangeDresserAlienHairColor)));
+                                }));
                         }
+
                         if (Settings.ShowBodyChange)
                         {
-                            options.Add(new FloatMenuOption("ChangeDresser.ChangeBody".Translate(), delegate ()
-                            {
-                                Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserBody)));
-                            }));
+                            options.Add(new FloatMenuOption("ChangeDresser.ChangeBody".Translate(),
+                                delegate()
+                                {
+                                    Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null,
+                                        CurrentEditorEnum.ChangeDresserBody)));
+                                }));
                             if (isAlien)
                             {
-                                options.Add(new FloatMenuOption("ChangeDresser.ChangeAlienBodyColor".Translate(), delegate ()
-                                {
-                                    Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null, CurrentEditorEnum.ChangeDresserAlienSkinColor)));
-                                }));
+                                options.Add(new FloatMenuOption("ChangeDresser.ChangeAlienBodyColor".Translate(),
+                                    delegate()
+                                    {
+                                        Find.WindowStack.Add(new DresserUI(DresserDtoFactory.Create(__instance, null,
+                                            CurrentEditorEnum.ChangeDresserAlienSkinColor)));
+                                    }));
                             }
                         }
+
                         Find.WindowStack.Add(new FloatMenu(options));
                     }
                 });
                 l.AddRange(__result);
             }
-            
-            if (!__instance.Drafted && WorldComp.HasDressers())
+
+            if (!__instance.Drafted && __instance.Faction == Faction.OfPlayer && WorldComp.HasDressers())
             {
 #if DEBUG
                 ++i;
@@ -375,6 +395,7 @@ namespace ChangeDresser
                         {
                             a.icon = WidgetUtil.noneTexture;
                         }
+
                         StringBuilder sb = new StringBuilder();
                         if (!o.IsBeingWorn)
                         {
@@ -386,6 +407,7 @@ namespace ChangeDresser
                             sb.Append("ChangeDresser.Wearing".Translate());
                             a.defaultDesc = "ChangeDresser.WearingDesc".Translate();
                         }
+
                         sb.Append(" ");
                         sb.Append(o.Label);
                         a.defaultLabel = sb.ToString();
@@ -469,6 +491,7 @@ namespace ChangeDresser
                         {
                             a.icon = WidgetUtil.noneTexture;
                         }
+
                         StringBuilder sb = new StringBuilder();
                         if (!pawn.outfits.CurrentApparelPolicy.Equals(o))
                         {
@@ -480,6 +503,7 @@ namespace ChangeDresser
                             sb.Append("ChangeDresser.Wearing".Translate());
                             a.defaultDesc = "ChangeDresser.WearingDesc".Translate();
                         }
+
                         sb.Append(" ");
                         sb.Append(o.Label);
                         a.defaultLabel = sb.ToString();
@@ -524,6 +548,10 @@ namespace ChangeDresser
             if (WorldComp.HasDressers())
             {
                 Pawn pawn = __instance.pawn;
+                if (pawn.Downed)
+                {
+                    return;
+                }
                 if (WorldComp.PawnOutfits.TryGetValue(pawn, out PawnOutfitTracker outfits))
                 {
                     if (pawn.Drafted)
@@ -538,6 +566,8 @@ namespace ChangeDresser
             }
         }
     }
+
+
 
     [HarmonyPatch(typeof(JobGiver_OptimizeApparel), "TryGiveJob", new Type[] { typeof(Pawn) })]
     static class Patch_JobGiver_OptimizeApparel
@@ -554,7 +584,10 @@ namespace ChangeDresser
             }
         }
 
-        static readonly FieldInfo wornApparelScoresFI = typeof(JobGiver_OptimizeApparel).GetField("wornApparelScores", BindingFlags.Static | BindingFlags.NonPublic);
+        static readonly FieldInfo wornApparelScoresFI =
+            typeof(JobGiver_OptimizeApparel).GetField("wornApparelScores",
+                BindingFlags.Static | BindingFlags.NonPublic);
+
         static void Postfix(Pawn pawn, JobGiver_OptimizeApparel __instance, ref bool __state, ref Job __result)
         {
             if (!__state)
@@ -649,6 +682,7 @@ namespace ChangeDresser
                     return true;
                 }
             }
+
             return false;
         }
     }
@@ -665,6 +699,7 @@ namespace ChangeDresser
                     d.Empty<T>(a);
                 }
             }
+
             return a;
         }
 
@@ -733,7 +768,9 @@ namespace ChangeDresser
     static class Patch_ReservationManager_CanReserve
     {
         private static FieldInfo mapFI = null;
-        static void Postfix(ref bool __result, ReservationManager __instance, Pawn claimant, LocalTargetInfo target, int maxPawns, int stackCount, ReservationLayerDef layer, bool ignoreOtherReservations)
+
+        static void Postfix(ref bool __result, ReservationManager __instance, Pawn claimant, LocalTargetInfo target,
+            int maxPawns, int stackCount, ReservationLayerDef layer, bool ignoreOtherReservations)
         {
             if (mapFI == null)
             {
@@ -743,7 +780,8 @@ namespace ChangeDresser
 #if DEBUG
             Log.Warning("\nCanReserve original result: " + __result);
 #endif
-            if (!__result && mapFI != null && (target.Thing == null || target.Thing.def.defName.Equals("ChangeDresser")))
+            if (!__result && mapFI != null &&
+                (target.Thing == null || target.Thing.def.defName.Equals("ChangeDresser")))
             {
                 Map m = (Map)mapFI.GetValue(__instance);
                 if (m != null)
@@ -773,7 +811,8 @@ namespace ChangeDresser
         }
     }
 
-#region Caravan Forming
+    #region Caravan Forming
+
     [HarmonyPatch(typeof(Dialog_FormCaravan), "PostOpen")]
     static class Patch_Dialog_FormCaravan_PostOpen
     {
@@ -782,7 +821,8 @@ namespace ChangeDresser
             Type type = __instance.GetType();
             if (type == typeof(Dialog_FormCaravan))
             {
-                Map map = __instance.GetType().GetField("map", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance) as Map;
+                Map map = __instance.GetType().GetField("map", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetValue(__instance) as Map;
 
                 foreach (Building_Dresser d in WorldComp.GetDressers(map))
                 {
@@ -811,7 +851,8 @@ namespace ChangeDresser
     static class Patch_CaravanExitMapUtility_ExitMapAndCreateCaravan
     {
         [HarmonyPriority(Priority.First)]
-        static void Prefix(IEnumerable<Pawn> pawns, Faction faction, int exitFromTile, int directionTile, int destinationTile, bool sendMessage)
+        static void Prefix(IEnumerable<Pawn> pawns, Faction faction, int exitFromTile, int directionTile,
+            int destinationTile, bool sendMessage)
         {
             if (faction == Faction.OfPlayer)
             {
@@ -847,9 +888,11 @@ namespace ChangeDresser
             }
         }
     }*/
-#endregion
 
-#region Handle "Do until X" for stored weapons
+    #endregion
+
+    #region Handle "Do until X" for stored weapons
+
     [HarmonyPatch(typeof(RecipeWorkerCounter), "CountProducts")]
     static class Patch_RecipeWorkerCounter_CountProducts
     {
@@ -865,18 +908,57 @@ namespace ChangeDresser
                     {
                         if (bill.Map == d.Map)
                         {
-                            __result += d.GetApparelCount(def, bill.qualityRange, bill.hpRange, (bill.limitToAllowedStuff) ? bill.ingredientFilter : null);
+                            __result += d.GetApparelCount(def, bill.qualityRange, bill.hpRange,
+                                (bill.limitToAllowedStuff) ? bill.ingredientFilter : null);
                         }
                     }
                 }
             }
         }
     }
-#endregion
 
-#region Pawn Death
-    [HarmonyPatch(typeof(Pawn), "Kill")]
-    static class Patch_Pawn_Kill
+    #endregion
+
+    // #region Pawn Death
+    //
+    // [HarmonyPatch(typeof(Pawn), "Kill")]
+    // static class Patch_Pawn_Kill
+    // {
+    //     private static Map map;
+    //
+    //     [HarmonyPriority(Priority.First)]
+    //     static void Prefix(Pawn __instance)
+    //     {
+    //         map = __instance.Map;
+    //     }
+    //
+    //     [HarmonyPriority(Priority.First)]
+    //     static void Postfix(Pawn __instance)
+    //     {
+    //         // if (__instance.Dead && __instance.apparel?.LockedApparel?.Count == 0)
+    //         // {
+    //         //     if (WorldComp.PawnOutfits.TryGetValue(__instance, out PawnOutfitTracker po))
+    //         //     {
+    //         //         WorldComp.PawnOutfits.Remove(__instance);
+    //         //
+    //         //         foreach (Apparel a in po.CustomApparel)
+    //         //         {
+    //         //             if (!WorldComp.AddApparel(a))
+    //         //             {
+    //         //                 BuildingUtil.DropThing(a, __instance.Position, map, true);
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // }
+    //     }
+    // }
+    //
+    // #endregion
+
+    #region Pawn Destroy
+
+    [HarmonyPatch(typeof(Pawn), "Destroy")]
+    static class Patch_Pawn_Destroy
     {
         private static Map map;
 
@@ -887,26 +969,90 @@ namespace ChangeDresser
         }
 
         [HarmonyPriority(Priority.First)]
-        static void Postfix(Pawn __instance)
+        static void Postfix(Pawn __instance, DestroyMode mode)
         {
-            if (__instance.Dead && __instance.apparel?.LockedApparel?.Count == 0)
+            if (mode == DestroyMode.Vanish && WorldComp.PawnOutfits.TryGetValue(__instance, out PawnOutfitTracker po))
             {
-                if (WorldComp.PawnOutfits.TryGetValue(__instance, out PawnOutfitTracker po))
-                {
-                    WorldComp.PawnOutfits.Remove(__instance);
+                WorldComp.PawnOutfits.Remove(__instance);
 
-                    foreach (Apparel a in po.CustomApparel)
+                foreach (Apparel a in po.CustomApparel)
+                {
+                    if (!WorldComp.AddApparel(a))
                     {
-                        if (!WorldComp.AddApparel(a))
-                        {
-                            BuildingUtil.DropThing(a, __instance.Position, map, true);
-                        }
+                        BuildingUtil.DropThing(a, __instance.Position, map, true);
                     }
                 }
             }
         }
     }
-#endregion
+
+    #endregion
+    
+    // #region Corpse Destroy
+    //
+    // [HarmonyPatch(typeof(Corpse), "Destroy")]
+    // static class Patch_Corpse_Destroy
+    // {
+    //     private static Map map;
+    //
+    //     [HarmonyPriority(Priority.First)]
+    //     static void Prefix(Corpse __instance)
+    //     {
+    //         map = __instance.Map;
+    //     }
+    //
+    //     [HarmonyPriority(Priority.First)]
+    //     static void Postfix(Corpse __instance, DestroyMode mode)
+    //     {
+    //         if (mode == DestroyMode.Vanish && WorldComp.PawnOutfits.TryGetValue(__instance.InnerPawn, out PawnOutfitTracker po))
+    //         {
+    //             WorldComp.PawnOutfits.Remove(__instance.InnerPawn);
+    //
+    //             foreach (Apparel a in po.CustomApparel)
+    //             {
+    //                 if (!WorldComp.AddApparel(a))
+    //                 {
+    //                     BuildingUtil.DropThing(a, __instance.Position, map, true);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    // #endregion
+
+    
+    // #region Corpse Kill
+    //
+    // [HarmonyPatch(typeof(Corpse), "Kill")]
+    // static class Patch_Corpse_Kill
+    // {
+    //     private static Map map;
+    //
+    //     [HarmonyPriority(Priority.First)]
+    //     static void Prefix(Corpse __instance)
+    //     {
+    //         map = __instance.Map;
+    //     }
+    //
+    //     [HarmonyPriority(Priority.First)]
+    //     static void Postfix(Corpse __instance)
+    //     {
+    //         if (WorldComp.PawnOutfits.TryGetValue(__instance.InnerPawn, out PawnOutfitTracker po))
+    //         {
+    //             WorldComp.PawnOutfits.Remove(__instance.InnerPawn);
+    //
+    //             foreach (Apparel a in po.CustomApparel)
+    //             {
+    //                 if (!WorldComp.AddApparel(a))
+    //                 {
+    //                     BuildingUtil.DropThing(a, __instance.Position, map, true);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // #endregion
 
     [HarmonyPatch(typeof(OutfitDatabase), "TryDelete")]
     static class Patch_OutfitDatabase_TryDelete
@@ -924,31 +1070,31 @@ namespace ChangeDresser
         }
     }
 
-	[HarmonyPatch(typeof(ScribeSaver), "InitSaving")]
-	static class Patch_ScribeSaver_InitSaving
-	{
-		static void Prefix()
-		{
-			try
-			{
-				foreach (Building_Dresser d in WorldComp.GetDressers(null))
-				{
-					try
-					{
-						d.ReclaimApparel(true);
-					}
-					catch (Exception e)
-					{
-						Log.Warning("Error while reclaiming apparel for change dresser\n" + e.Message);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				Log.Warning("Error while reclaiming apparel\n" + e.Message);
-			}
-		}
-	}
+    [HarmonyPatch(typeof(ScribeSaver), "InitSaving")]
+    static class Patch_ScribeSaver_InitSaving
+    {
+        static void Prefix()
+        {
+            try
+            {
+                foreach (Building_Dresser d in WorldComp.GetDressers(null))
+                {
+                    try
+                    {
+                        d.ReclaimApparel(true);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Warning("Error while reclaiming apparel for change dresser\n" + e.Message);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Warning("Error while reclaiming apparel\n" + e.Message);
+            }
+        }
+    }
 
     [HarmonyPatch(typeof(SettlementAbandonUtility), "Abandon")]
     static class Patch_SettlementAbandonUtility_Abandon
@@ -959,7 +1105,7 @@ namespace ChangeDresser
             WorldComp.RemoveDressers(settlement.Map);
         }
     }
-    
+
     [HarmonyPatch(typeof(Caravan), "AddPawn")]
     static class Patch_Caravan_AddPawn
     {
@@ -971,12 +1117,37 @@ namespace ChangeDresser
                 if (p != null && p.Drafted)
                     p.drafter.Drafted = false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Log.Error("Exception thrown from ChangeDresser Patch_Caravan_AddPawn - " + e.GetType().Name + " " + e.Message);
+                Log.Error("Exception thrown from ChangeDresser Patch_Caravan_AddPawn - " + e.GetType().Name + " " +
+                          e.Message);
             }
         }
     }
+    
+    
+    
+    // [HarmonyPatch(typeof(ApparelUtility), nameof(ApparelUtility.CanWearTogether))]
+    // static class Patch_ApparelUtility_CanWearTogether
+    // {
+    //     [HarmonyPriority(Priority.First)]
+    //     static void Prefix(ref ThingDef A, ref ThingDef B, ref BodyDef body)
+    //     {
+    //         if (A == null) {
+    //             Log.Warning("Argument 'A' is null.");
+    //         }
+    //
+    //
+    //         if (B == null) {
+    //             Log.Error("Argument 'B' is null.");
+    //         }
+    //
+    //         if (body == null) {
+    //             Log.Error("Argument 'body' is null.");
+    //         }
+    //
+    //     }
+    // }
     /*
     [HarmonyPatch(typeof(JobGiver_OptimizeApparel), "ApparelScoreRaw")]
     static class Patch_JobGiver_OptimizeApparel_ApparelScoreRaw

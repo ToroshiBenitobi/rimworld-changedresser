@@ -115,7 +115,7 @@ namespace ChangeDresser.UI
                             bool removed = WorldComp.OutfitsForBattle.Remove(o);
                         }
 
-                        foreach(PawnOutfitTracker po in WorldComp.PawnOutfits.Values)
+                        foreach(PawnOutfitTracker po in WorldComp.PlayFunctionPawnOutfits.Values)
                         {
                             po.UpdateOutfitType(o, (use) ? OutfitType.Battle : OutfitType.Civilian);
                         }
@@ -133,13 +133,13 @@ namespace ChangeDresser.UI
                     GUIStyle.none, GUIStyle.none);
                 x = 0;
                 int py = 0;
-                foreach (PawnOutfitTracker po in WorldComp.PawnOutfits.Values)
+                foreach (PawnOutfitTracker po in WorldComp.PlayFunctionPawnOutfits.Values)
                 {
                     Widgets.Label(new Rect(x, py, NAME_WIDTH, HEIGHT), po.Pawn.Name.ToStringShort);
                     py += HEIGHT + Y_BUFFER;
                 }
 				this.PreviousY = py;
-                Widgets.DrawLineVertical(NAME_WIDTH + 2, y, (HEIGHT + Y_BUFFER) * WorldComp.PawnOutfits.Values.Count);
+                Widgets.DrawLineVertical(NAME_WIDTH + 2, y, (HEIGHT + Y_BUFFER) * WorldComp.PlayFunctionPawnOutfits.Values.Count);
                 GUI.EndScrollView();
 
                 int mainScrollXMin = NAME_WIDTH + X_BUFFER + 4;
@@ -150,7 +150,7 @@ namespace ChangeDresser.UI
 
 				// Table of pawns and assigned outfits
 				py = 0;
-				foreach (PawnOutfitTracker po in WorldComp.PawnOutfits.Values)
+				foreach (PawnOutfitTracker po in WorldComp.PlayFunctionPawnOutfits.Values)
                 {
                     x = 0;
                     foreach (ApparelPolicy o in allOutfits)

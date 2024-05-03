@@ -3,6 +3,7 @@ using RimWorld.Planet;
 using System.Collections.Generic;
 using Verse;
 using System;
+using System.Linq;
 
 namespace ChangeDresser
 {
@@ -11,6 +12,19 @@ namespace ChangeDresser
         public static LinkedList<Building_Dresser> DressersToUse { get; private set; }
 
         public static Dictionary<Pawn, PawnOutfitTracker> PawnOutfits { get; private set; }
+        
+        public static Dictionary<Pawn, PawnOutfitTracker> PlayFunctionPawnOutfits
+        {
+            get
+            {
+                return PawnOutfits.Where(p => p.Key.Faction == Faction.OfPlayer&&!p.Key.Dead&&!p.Key.Destroyed&&!KidnapUtility.IsKidnapped(p.Key)).ToDictionary(p => p.Key, p => p.Value);
+            }
+            private set
+            {
+                PlayFunctionPawnOutfits = value;
+            }
+        }
+
         public static List<ApparelPolicy> OutfitsForBattle { get; private set; }
         public static OutfitType GetOutfitType(ApparelPolicy outfit) { return OutfitsForBattle.Contains(outfit) ? OutfitType.Battle : OutfitType.Civilian; }
         public static ApparelColorTracker ApparelColorTracker = new ApparelColorTracker();

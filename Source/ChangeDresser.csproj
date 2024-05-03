@@ -17,7 +17,7 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\SteamLibrary\steamapps\workshop\content\294100\1385697110\1.4\Assemblies</OutputPath>
+    <OutputPath>C:\SteamLibrary\steamapps\common\RimWorld\Mods\ChangeDresser\1.5\Assemblies</OutputPath>
     <DefineConstants>
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
