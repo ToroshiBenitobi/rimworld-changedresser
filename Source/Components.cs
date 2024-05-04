@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Verse;
 using System;
 using System.Linq;
+using ChangeDresser.UI;
 
 namespace ChangeDresser
 {
@@ -12,24 +13,78 @@ namespace ChangeDresser
         public static LinkedList<Building_Dresser> DressersToUse { get; private set; }
 
         public static Dictionary<Pawn, PawnOutfitTracker> PawnOutfits { get; private set; }
-        
+
         public static Dictionary<Pawn, PawnOutfitTracker> PlayFunctionPawnOutfits
         {
             get
             {
-                return PawnOutfits.Where(p => p.Key.Faction == Faction.OfPlayer&&!p.Key.Dead&&!p.Key.Destroyed&&!KidnapUtility.IsKidnapped(p.Key)).ToDictionary(p => p.Key, p => p.Value);
+                return PawnOutfits
+                    .Where(p => p.Key.Faction == Faction.OfPlayer && !p.Key.Dead && !p.Key.Destroyed &&
+                                !KidnapUtility.IsKidnapped(p.Key)).ToDictionary(p => p.Key, p => p.Value);
             }
-            private set
+            private set { PlayFunctionPawnOutfits = value; }
+        }
+        
+        public static Dictionary<Pawn, PawnOutfitTracker> DisfunctionPawnOutfits
+        {
+            get
             {
-                PlayFunctionPawnOutfits = value;
+                return PawnOutfits
+                    .Where(p => p.Key.Faction != Faction.OfPlayer || p.Key.Dead || p.Key.Destroyed ||
+                                KidnapUtility.IsKidnapped(p.Key)).ToDictionary(p => p.Key, p => p.Value);
+            }
+            private set { PlayFunctionPawnOutfits = value; }
+        }
+
+        public static PawnTableDef AssginOutfit
+        {
+            get
+            {
+                PawnTableDef assignOutfit = new PawnTableDef();
+                assignOutfit.minWidth = (int)AssignOutfitUI.WindowsWidth - (18 * 2);
+                assignOutfit.workerClass = typeof(PawnTable_PlayerPawns);
+                assignOutfit.defName = "AssignOutfit";
+                assignOutfit.columns = new List<PawnColumnDef>();
+
+                PawnColumnDef pawnColumnDef = new PawnColumnDef();
+                pawnColumnDef.defName = "LabelShortWithIcon";
+                pawnColumnDef.label = "Name".Translate();
+                pawnColumnDef.workerClass = typeof(PawnColumnWorker_LabelWithCustomHead);
+                pawnColumnDef.sortable = true;
+                pawnColumnDef.useLabelShort = true;
+                pawnColumnDef.showIcon = true;
+                assignOutfit.columns.Add(pawnColumnDef);
+
+                bool moveWorkTypeLabelDown = false;
+                foreach (var outfit in Current.Game.outfitDatabase.AllOutfits)
+                {
+                    moveWorkTypeLabelDown = !moveWorkTypeLabelDown;
+                    PawnColumnDef def = new PawnColumnDef_AssignOutfit();
+                    def.defName = "Outfit_" + outfit.label;
+                    def.workerClass = typeof(PawnColumnWorker_AssignOutfit);
+                    def.sortable = true;
+                    def.paintable = true;
+                    def.moveWorkTypeLabelDown = moveWorkTypeLabelDown;
+                    ((PawnColumnDef_AssignOutfit)def).apparelPolicy = outfit;
+                    assignOutfit.columns.Add(def);
+                }
+
+                // Log.Warning(assignOutfit.columns.Count.ToString());
+                return assignOutfit;
             }
         }
 
         public static List<ApparelPolicy> OutfitsForBattle { get; private set; }
-        public static OutfitType GetOutfitType(ApparelPolicy outfit) { return OutfitsForBattle.Contains(outfit) ? OutfitType.Battle : OutfitType.Civilian; }
+
+        public static OutfitType GetOutfitType(ApparelPolicy outfit)
+        {
+            return OutfitsForBattle.Contains(outfit) ? OutfitType.Battle : OutfitType.Civilian;
+        }
+
         public static ApparelColorTracker ApparelColorTracker = new ApparelColorTracker();
 
         private static int nextDresserOutfitId = 0;
+
         public static int NextDresserOutfitId
         {
             get
@@ -40,7 +95,7 @@ namespace ChangeDresser
             }
         }
 
-        static WorldComp ()
+        static WorldComp()
         {
             DressersToUse = new LinkedList<Building_Dresser>();
         }
@@ -81,7 +136,7 @@ namespace ChangeDresser
                 return true;
             if (map == null || apparel.Map == null)
                 return AddApparelAnyDresser(apparel);
-            
+
             foreach (Building_Dresser d in DressersToUse)
             {
                 if (d.Map == map && d.settings.AllowedToAccept(apparel))
@@ -99,6 +154,7 @@ namespace ChangeDresser
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -112,6 +168,7 @@ namespace ChangeDresser
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -145,13 +202,13 @@ namespace ChangeDresser
             }
         }
 
-		public static void CleanupCustomOutfits()
-		{
-			foreach (PawnOutfitTracker t in PawnOutfits.Values)
-				t.Clean();
-		}
+        public static void CleanupCustomOutfits()
+        {
+            foreach (PawnOutfitTracker t in PawnOutfits.Values)
+                t.Clean();
+        }
 
-		public static bool HasDressers()
+        public static bool HasDressers()
         {
             return DressersToUse.Count > 0;
         }
@@ -163,6 +220,7 @@ namespace ChangeDresser
                 if (d.Spawned && d.Map == map)
                     return true;
             }
+
             return false;
         }
 
@@ -177,6 +235,7 @@ namespace ChangeDresser
                 {
                     DressersToUse.Remove(n);
                 }
+
                 n = next;
             }
         }
@@ -187,6 +246,7 @@ namespace ChangeDresser
             {
                 return true;
             }
+
             return false;
         }
 
@@ -205,16 +265,19 @@ namespace ChangeDresser
                         break;
                     }
                 }
+
                 if (!added)
                 {
                     l.AddLast(d);
                 }
             }
+
             DressersToUse.Clear();
             DressersToUse = l;
         }
 
         private List<PawnOutfitTracker> tempPawnOutfits = null;
+
         public override void ExposeData()
         {
             if (Scribe.mode == LoadSaveMode.Saving)

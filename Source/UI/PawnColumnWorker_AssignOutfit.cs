@@ -4,101 +4,201 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using Verse.Sound;
+using Object = UnityEngine.Object;
 
 namespace ChangeDresser.UI
 {
-  public class PawnColumnWorker_AssignOutfit : PawnColumnWorker
-  {
-    public const int TopAreaHeight = 65;
-    public const int ManageOutfitsButtonHeight = 32;
-
-    public override void DoHeader(Rect rect, PawnTable table)
+    public class PawnColumnWorker_AssignOutfit : PawnColumnWorker_Checkbox
     {
-      base.DoHeader(rect, table);
-      MouseoverSounds.DoRegion(rect);
-      Rect rect1 = new Rect(rect.x, rect.y + (rect.height - 65f), Mathf.Min(rect.width, 360f), 32f);
-      if (Widgets.ButtonText(rect1, (string) "ManageApparelPolicies".Translate()))
-      {
-        Find.WindowStack.Add((Window) new Dialog_ManageApparelPolicies((ApparelPolicy) null));
-        PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.Outfits, KnowledgeAmount.Total);
-      }
-      UIHighlighter.HighlightOpportunity(rect1, "ManageOutfits");
-    }
+        private Vector2 cachedOutfitLabelSize;
+        private static readonly Texture2D SortingIcon = ContentFinder<Texture2D>.Get("UI/Icons/Sorting");
 
-    public override void DoCell(Rect rect, Pawn pawn, PawnTable table)
-    {
-      if (pawn.outfits == null)
-        return;
-      Rect rect1 = rect.ContractedBy(0.0f, 2f);
-      int num = pawn.outfits.forcedHandler.SomethingIsForced ? 1 : 0;
-      Rect left = rect1;
-      Rect right = new Rect();
-      if (num != 0)
-        rect1.SplitVerticallyWithMargin(out left, out right, 4f);
-      if (pawn.IsQuestLodger())
-      {
-        Text.Anchor = TextAnchor.MiddleCenter;
-        Widgets.Label(left, "Unchangeable".Translate().Truncate(left.width));
-        TooltipHandler.TipRegionByKey(left, "QuestRelated_Outfit");
-        Text.Anchor = TextAnchor.UpperLeft;
-      }
-      else
-        Widgets.Dropdown<Pawn, ApparelPolicy>(left, pawn, (Func<Pawn, ApparelPolicy>) (p => p.outfits.CurrentApparelPolicy), new Func<Pawn, IEnumerable<Widgets.DropdownMenuElement<ApparelPolicy>>>(this.Button_GenerateMenu), pawn.outfits.CurrentApparelPolicy.label.Truncate(left.width), dragLabel: pawn.outfits.CurrentApparelPolicy.label, paintable: true);
-      if (num == 0)
-        return;
-      if (Widgets.ButtonText(right, (string) "ClearForcedApparel".Translate()))
-        pawn.outfits.forcedHandler.Reset();
-      if (!Mouse.IsOver(right))
-        return;
-      TooltipHandler.TipRegion(right, new TipSignal((Func<string>) (() =>
-      {
-        string str = (string) ("ForcedApparel".Translate() + ":\n");
-        foreach (Apparel apparel in pawn.outfits.forcedHandler.ForcedApparel)
-          str = str + "\n   " + apparel.LabelCap;
-        return str;
-      }), pawn.GetHashCode() * 612));
-    }
+        private static readonly Texture2D SortingDescendingIcon =
+            ContentFinder<Texture2D>.Get("UI/Icons/SortingDescending");
 
-    private IEnumerable<Widgets.DropdownMenuElement<ApparelPolicy>> Button_GenerateMenu(Pawn pawn)
-    {
-      foreach (ApparelPolicy allOutfit in Current.Game.outfitDatabase.AllOutfits)
-      {
-        ApparelPolicy outfit = allOutfit;
-        yield return new Widgets.DropdownMenuElement<ApparelPolicy>()
+        public ApparelPolicy ApparelPolicy => ((PawnColumnDef_AssignOutfit)def).apparelPolicy;
+
+        public void DoHeaderCheckon(Rect rect, PawnTable table)
         {
-          option = new FloatMenuOption(outfit.label, (Action) (() => pawn.outfits.CurrentApparelPolicy = outfit)),
-          payload = outfit
-        };
-      }
-      yield return new Widgets.DropdownMenuElement<ApparelPolicy>()
-      {
-        option = new FloatMenuOption(string.Format("{0}...", (object) "AssignTabEdit".Translate()), (Action) (() => Find.WindowStack.Add((Window) new Dialog_ManageApparelPolicies(pawn.outfits.CurrentApparelPolicy))))
-      };
-    }
+            bool checkOn = this.GetHeadValue();
+            bool flag = checkOn;
 
-    public override int GetMinWidth(PawnTable table)
-    {
-      return Mathf.Max(base.GetMinWidth(table), Mathf.CeilToInt(194f));
-    }
+            // Calculate the center position for the checkbox
+            float checkboxSize = 24f; // Size of the checkbox
+            float centerX = rect.x + (rect.width / 2) - (checkboxSize / 2);
 
-    public override int GetOptimalWidth(PawnTable table)
-    {
-      return Mathf.Clamp(Mathf.CeilToInt(251f), this.GetMinWidth(table), this.GetMaxWidth(table));
-    }
+            Rect rect1 = new Rect(centerX, rect.y, checkboxSize, checkboxSize);
+            Widgets.Checkbox(centerX, rect.y, ref checkOn);
 
-    public override int GetMinHeaderHeight(PawnTable table)
-    {
-      return Mathf.Max(base.GetMinHeaderHeight(table), 65);
-    }
+            if (Mouse.IsOver(rect1))
+            {
+                string tip = "ChangeDresser.UseForBattle".Translate();
+                if (!tip.NullOrEmpty())
+                    TooltipHandler.TipRegion(rect1, (TipSignal)tip);
+            }
 
-    public override int Compare(Pawn a, Pawn b)
-    {
-      return this.GetValueToCompare(a).CompareTo(this.GetValueToCompare(b));
-    }
+            if (checkOn == flag)
+                return;
+            this.SetHeadValue(checkOn, table);
+        }
 
-    private int GetValueToCompare(Pawn pawn)
-    {
-      return pawn.outfits != null && pawn.outfits.CurrentApparelPolicy != null ? pawn.outfits.CurrentApparelPolicy.id : int.MinValue;
+        public override void DoHeader(Rect rect, PawnTable table)
+        {
+            // base function
+            base.DoHeader(rect, table);
+
+            DoHeaderCheckon(rect, table);
+
+            Verse.Text.Font = GameFont.Small;
+            if (this.cachedOutfitLabelSize == new Vector2())
+                this.cachedOutfitLabelSize =
+                    Verse.Text.CalcSize(((PawnColumnDef_AssignOutfit)def).apparelPolicy.label.CapitalizeFirst());
+            Rect labelRect = this.GetLabelRect(rect);
+            MouseoverSounds.DoRegion(labelRect);
+            Verse.Text.Anchor = TextAnchor.MiddleCenter;
+            Widgets.Label(labelRect, ((PawnColumnDef_AssignOutfit)def).apparelPolicy.label.CapitalizeFirst());
+            GUI.color = new Color(1f, 1f, 1f, 0.3f);
+            Widgets.DrawLineVertical(labelRect.center.x, labelRect.yMax - 3f,
+                (float)((double)rect.y + 50.0 - (double)labelRect.yMax + 3.0));
+            Widgets.DrawLineVertical(labelRect.center.x + 1f, labelRect.yMax - 3f,
+                (float)((double)rect.y + 50.0 - (double)labelRect.yMax + 3.0));
+            GUI.color = Color.white;
+            Verse.Text.Anchor = TextAnchor.UpperLeft;
+        }
+
+        private Rect GetLabelRect(Rect headerRect)
+        {
+            Rect labelRect = new Rect(headerRect.center.x - this.cachedOutfitLabelSize.x / 2f, headerRect.y,
+                this.cachedOutfitLabelSize.x, this.cachedOutfitLabelSize.y);
+            // For checkbox
+            labelRect.y += 28f;
+            if (this.def.moveWorkTypeLabelDown)
+                labelRect.y += 20f;
+            return labelRect;
+        }
+
+        protected override Rect GetInteractableHeaderRect(Rect headerRect, PawnTable table)
+        {
+            return this.GetLabelRect(headerRect);
+        }
+
+        public override int GetMinHeaderHeight(PawnTable table) => 50 + 28;
+
+        public override int GetMinWidth(PawnTable table)
+        {
+            Verse.Text.Font = GameFont.Small;
+            int minWidth =
+                Mathf.CeilToInt(Verse.Text
+                    .CalcSize(((PawnColumnDef_AssignOutfit)def).apparelPolicy.label.CapitalizeFirst()).x) / 2 + 10;
+            return Mathf.Max(minWidth, base.GetMinWidth(table));
+        }
+
+
+        public override int GetOptimalWidth(PawnTable table)
+        {
+            return Mathf.Clamp(39, this.GetMinWidth(table), this.GetMaxWidth(table));
+        }
+
+        public override int GetMaxWidth(PawnTable table) => Mathf.Min(base.GetMaxWidth(table), 80);
+
+
+        protected override bool HasCheckbox(Pawn pawn)
+        {
+            return true;
+        }
+
+        protected override bool GetValue(Pawn pawn)
+        {
+            if (WorldComp.PlayFunctionPawnOutfits.TryGetValue(pawn, out PawnOutfitTracker po))
+            {
+                bool assign = po.Contains(this.ApparelPolicy);
+                return assign;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        protected override void SetValue(Pawn pawn, bool value, PawnTable table)
+        {
+            if (WorldComp.PlayFunctionPawnOutfits.TryGetValue(pawn, out PawnOutfitTracker po))
+            {
+                HandleOutfitAssign(value, this.ApparelPolicy, po);
+            }
+        }
+
+        protected bool GetHeadValue()
+        {
+            ApparelPolicy o = ((PawnColumnDef_AssignOutfit)def).apparelPolicy;
+            return WorldComp.OutfitsForBattle.Contains(o);
+        }
+
+        protected void SetHeadValue(bool value, PawnTable table)
+        {
+            ApparelPolicy o = ((PawnColumnDef_AssignOutfit)def).apparelPolicy;
+            if (value)
+            {
+                WorldComp.OutfitsForBattle.Add(o);
+            }
+            else
+            {
+                bool removed = WorldComp.OutfitsForBattle.Remove(o);
+            }
+
+            foreach (PawnOutfitTracker po in WorldComp.PawnOutfits.Values)
+            {
+                po.UpdateOutfitType(o, (value) ? OutfitType.Battle : OutfitType.Civilian);
+            }
+        }
+
+        private void HandleOutfitAssign(bool assign, ApparelPolicy outfit, PawnOutfitTracker po)
+        {
+            Pawn pawn = po.Pawn;
+            if (assign)
+            {
+                po.DefinedOutfits.Add(new DefinedOutfit(outfit, WorldComp.GetOutfitType(outfit)));
+            }
+            else
+            {
+                po.Remove(outfit);
+                if (pawn.outfits.CurrentApparelPolicy.Equals(outfit))
+                {
+                    bool newOutfitFound;
+                    if (pawn.Drafted)
+                    {
+                        newOutfitFound = !po.ChangeToBattleOutfit();
+                    }
+                    else
+                    {
+                        newOutfitFound = !po.ChangeToCivilianOutfit();
+                    }
+
+                    if (!newOutfitFound)
+                    {
+                        Messages.Message(
+                            pawn.Name.ToStringShort + " will no longer wear " + outfit.label +
+                            ". Could not find another Outfit for them to wear. Please fix this manually.",
+                            MessageTypeDefOf.CautionInput);
+                    }
+                    else
+                    {
+                        IDresserOutfit o = po.CurrentOutfit;
+                        if (o != null)
+                        {
+                            Messages.Message(
+                                pawn.Name.ToStringShort + " will no longer wear " + outfit.label +
+                                " and will instead be assigned to wear " + o.Label, MessageTypeDefOf.CautionInput);
+                        }
+                        else
+                        {
+                            Messages.Message(
+                                pawn.Name.ToStringShort + " will no longer wear " + outfit.label +
+                                " but could not be assigned anything else to wear.", MessageTypeDefOf.CautionInput);
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
 }

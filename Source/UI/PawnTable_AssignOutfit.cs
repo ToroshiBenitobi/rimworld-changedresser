@@ -1,4 +1,7 @@
-﻿using RimWorld;
+﻿using System;
+using System.Collections.Generic;
+using RimWorld;
+using Verse;
 
 namespace ChangeDresser.UI
 {
@@ -9,7 +12,7 @@ namespace ChangeDresser.UI
       return PlayerPawnsDisplayOrderUtility.InOrder(input);
     }
 
-    public PawnTable_PlayerPawns(
+    public PawnTable_AssignOutfit(
       PawnTableDef def,
       Func<IEnumerable<Pawn>> pawnsGetter,
       int uiWidth,

@@ -10,32 +10,38 @@ namespace ChangeDresser.UI
 {
     class AssignOutfitUI : Window
     {
+        private PawnTable table;
         private readonly Building_Dresser Dresser;
         private Vector2 scrollPosition = new Vector2(0, 0);
         private float PreviousY = 0;
-        private readonly Color BorderColor = new Color(1f, 1f, 1f, 0.2f);
 
-        private bool dirty;
-        public void SetDirty() => this.dirty = true;
+        private PawnTableDef PawnTableDef => WorldComp.AssginOutfit;
+        // private readonly Color BorderColor = new Color(1f, 1f, 1f, 0.2f);
 
-        private List<Pawn> cachedPawns = new List<Pawn>();
-        private PawnColumnDef sortByColumn;
-        private bool sortDescending;
-        private List<PawnColumnDef_AssignOutfit> columns = new List<PawnColumnDef_AssignOutfit>();
+        // private bool dirty;
+        // public void SetDirty() => this.dirty = true;
 
-        private List<float> cachedColumnWidths = new List<float>();
-        private List<float> cachedRowHeights = new List<float>();
-        private List<LookTargets> cachedLookTargets = new List<LookTargets>();
-        private Vector2 cachedSize;
-        private float cachedHeaderHeight;
-        private float cachedHeightNoScrollbar;
+        // private List<Pawn> cachedPawns = new List<Pawn>();
+        // private PawnColumnDef sortByColumn;
+        // private bool sortDescending;
+        // private List<PawnColumnDef_AssignOutfit> columns = new List<PawnColumnDef_AssignOutfit>();
+        //
+        // private List<float> cachedColumnWidths = new List<float>();
+        // private List<float> cachedRowHeights = new List<float>();
+        // private List<LookTargets> cachedLookTargets = new List<LookTargets>();
+        // private Vector2 cachedSize;
+        // private float cachedHeaderHeight;
+        // private float cachedHeightNoScrollbar;
 
         private const int NAME_WIDTH = 100;
         private const int CHECKBOX_WIDTH = 100;
         private const int HEIGHT = 35;
         private const int X_BUFFER = 10;
         private const int Y_BUFFER = 5;
-        private Rect windowRect;
+        private float ExtraBottomSpace = 28f;
+        private float ExtraTopSpace = 0.0f;
+        public static float WindowsHeight = 600f;
+        public static float WindowsWidth = 1000f;
 
 
         public AssignOutfitUI(Building_Dresser dresser)
@@ -43,7 +49,7 @@ namespace ChangeDresser.UI
             this.Dresser = dresser;
 
             this.closeOnClickedOutside = true;
-            this.doCloseButton = true;
+            this.doCloseButton = false;
             this.doCloseX = true;
             this.absorbInputAroundWindow = true;
             this.forcePause = true;
@@ -69,128 +75,75 @@ namespace ChangeDresser.UI
                 }
             }
 
-            SetDirty();
+            if (this.table == null)
+                this.table = this.CreateTable();
+            CreateTable();
+            this.table.SetDirty();
+        }
+
+
+        private PawnTable CreateTable()
+        {
+            return (PawnTable)Activator.CreateInstance(this.PawnTableDef.workerClass,
+                (object)this.PawnTableDef, (object)(Func<IEnumerable<Pawn>>)(() => this.Pawns),
+                (object)99999,
+                (object)(int)((double)(WindowsHeight) - HEIGHT - (double)this.ExtraTopSpace -
+                              (double)this.ExtraBottomSpace - (double)this.Margin * 2.0));
+        }
+
+        protected IEnumerable<Pawn> Pawns
+        {
+            get
+            {
+                return PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_FreeColonists.Where<Pawn>(
+                    (Func<Pawn, bool>)(pawn => !pawn.DevelopmentalStage.Baby()));
+            }
         }
 
         public override Vector2 InitialSize
         {
-            get { return new Vector2(650f, 600f); }
+            get { return new Vector2(WindowsWidth, WindowsHeight); }
         }
 
-        private void RecacheIfDirty()
-        {
-            if (!this.dirty)
-                return;
-            this.dirty = false;
-            this.RecachePawns();
-            this.RecacheRowHeights();
-            this.cachedHeaderHeight = this.CalculateHeaderHeight();
-            this.cachedHeightNoScrollbar = this.CalculateTotalRequiredHeight();
-            this.RecacheSize();
-            this.RecacheColumnWidths();
-            this.RecacheLookTargets();
-        }
-
-
-        public void TableGUI(Vector2 position)
-        {
-            float num1 = this.cachedSize.x - 16f;
-            List<PawnColumnDef_AssignOutfit> columns = this.Columns;
-            int num2 = 0;
-            for (int index = 0; index < columns.Count; ++index)
-            {
-                int width = index != columns.Count - 1
-                    ? (int)this.cachedColumnWidths[index]
-                    : (int)((double)num1 - (double)num2);
-                Rect rect = new Rect((float)((int)position.x + num2), (float)(int)position.y, (float)width,
-                    (float)(int)this.cachedHeaderHeight);
-                columns[index].Worker.DoHeader(rect, this);
-                num2 += width;
-            }
-
-            Rect outRect = new Rect((float)(int)position.x, (float)((int)position.y + (int)this.cachedHeaderHeight),
-                (float)(int)this.cachedSize.x, (float)((int)this.cachedSize.y - (int)this.cachedHeaderHeight));
-            Rect viewRect = new Rect(0.0f, 0.0f, outRect.width - 16f,
-                (float)((int)this.cachedHeightNoScrollbar - (int)this.cachedHeaderHeight));
-            Widgets.BeginScrollView(outRect, ref this.scrollPosition, viewRect);
-            int x = 0;
-            for (int index1 = 0; index1 < columns.Count; ++index1)
-            {
-                int y = 0;
-                PawnColumnDef_AssignOutfit pawnColumnDef = columns[index1];
-                int num3 = index1 != columns.Count - 1
-                    ? (int)this.cachedColumnWidths[index1]
-                    : (int)((double)num1 - (double)x);
-                for (int index2 = 0; index2 < this.cachedPawns.Count; ++index2)
-                {
-                    GUI.color = this.BorderColor;
-                    Widgets.DrawLineHorizontal((float)x, (float)y, (float)num3);
-                    GUI.color = Color.white;
-                    Rect rect = new Rect((float)x, (float)y, (float)num3,
-                        (float)(int)this.cachedRowHeights[index2]);
-                    Pawn cachedPawn = this.cachedPawns[index2];
-                    bool flag = false;
-
-
-                    if (((double)y - (double)this.scrollPosition.y + (double)(int)this.cachedRowHeights[index2] <
-                         0.0
-                            ? 1
-                            : ((double)y - (double)this.scrollPosition.y > (double)outRect.height ? 1 : 0)) == 0)
-                    {
-                        columns[index1].Worker.DoCell(rect, cachedPawn, this);
-                    }
-
-                    GUI.color = Color.white;
-                    y += (int)rect.height;
-                }
-
-                x += num3;
-            }
-
-            int y1 = 0;
-            for (int index = 0; index < this.cachedPawns.Count; ++index)
-            {
-                Rect rect = new Rect(0.0f, (float)y1, viewRect.width, (float)(int)this.cachedRowHeights[index]);
-                if (Find.Selector.IsSelected((object)this.cachedPawns[index]))
-                    Widgets.DrawHighlight(rect, 0.6f);
-                if (Mouse.IsOver(rect))
-                {
-                    Widgets.DrawHighlight(rect);
-                    this.cachedLookTargets[index].Highlight(colonistBar: this.cachedPawns[index].IsColonist);
-                }
-
-                if (this.cachedPawns[index].Downed)
-                {
-                    GUI.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
-                    Widgets.DrawLineHorizontal(0.0f, rect.center.y, viewRect.width);
-                    GUI.color = Color.white;
-                }
-
-                y1 += (int)this.cachedRowHeights[index];
-            }
-
-            Widgets.EndScrollView();
-        }
 
         public override void DoWindowContents(Rect inRect)
         {
             try
             {
-                this.windowRect = inRect;
-                this.RecacheIfDirty();
-
-
-                //bool useInApparelLookup = this.Dresser.UseInApparelLookup;
-                //Widgets.CheckboxLabeled(new Rect(0, 0, 300, HEIGHT), "ChangeDresser.UseAsApparelSource".Translate(), ref useInApparelLookup);
-                //this.Dresser.UseInApparelLookup = useInApparelLookup;
-
                 if (Widgets.ButtonText(new Rect( /*450*/0, 0, 150, HEIGHT), "ChangeDresser.ManageOutfits".Translate()))
                 {
                     Find.WindowStack.Add(
                         new Dialog_ManageApparelPolicies(null /*Current.Game.outfitDatabase.DefaultOutfit*/));
                 }
+                
+                if (Widgets.ButtonText(new Rect( /*450*/150 + 20, 0, 150, HEIGHT),
+                        "ChangeDresser.FindMissingApparel".Translate()))
+                {
+                    foreach (var po in WorldComp.DisfunctionPawnOutfits.Values)
+                    {
+                        Pawn p = po.Pawn;
+                        foreach (Apparel a in po.CustomApparel)
+                        {
+                            this.Dresser.AddApparel(a);
+                        }
+                        WorldComp.PawnOutfits.Remove(p);
+                    }
+                }
 
-                this.TableGUI(new Vector2(inRect.x, inRect.y + HEIGHT));
+
+
+                Rect scrollViewRect = new Rect(inRect.x, inRect.y + this.ExtraTopSpace + HEIGHT,
+                    (int)AssignOutfitUI.WindowsWidth - (18 * 2), this.table.Size.y + this.ExtraBottomSpace);
+                Rect contentRect =
+                    new Rect(0, 0, this.table.Size.x,
+                        this.table.Size.y);
+
+                this.scrollPosition =
+                    GUI.BeginScrollView(scrollViewRect, this.scrollPosition, contentRect, false, false);
+                this.table.PawnTableOnGUI(new Vector2(contentRect.x, contentRect.y));
+
+                // End the scroll view
+                GUI.EndScrollView();
             }
             catch (Exception e)
             {
@@ -203,7 +156,6 @@ namespace ChangeDresser.UI
             try
             {
                 this.windowRect = inRect;
-                this.RecacheIfDirty();
                 const int NAME_WIDTH = 100;
                 const int CHECKBOX_WIDTH = 100;
                 const int HEIGHT = 35;
@@ -392,107 +344,106 @@ namespace ChangeDresser.UI
             }
         }
 
-        public List<PawnColumnDef_AssignOutfit> Columns
-        {
-            get
-            {
-                this.columns.Clear();
-                foreach (ApparelPolicy outfit in Current.Game.outfitDatabase.AllOutfits)
-                {
-                    PawnColumnDef_AssignOutfit def = new PawnColumnDef_AssignOutfit();
-                    def.apparelPolicy = outfit;
-                    this.columns.Add(def);
-                }
-                return this.columns;
-            }
-        }
+        // public List<PawnColumnDef_AssignOutfit> Columns
+        // {
+        //     get
+        //     {
+        //         this.columns.Clear();
+        //         foreach (ApparelPolicy outfit in Current.Game.outfitDatabase.AllOutfits)
+        //         {
+        //             PawnColumnDef_AssignOutfit def = new PawnColumnDef_AssignOutfit();
+        //             def.apparelPolicy = outfit;
+        //             this.columns.Add(def);
+        //         }
+        //         return this.columns;
+        //     }
+        // }
 
-        private IEnumerable<Pawn> LabelSortFunction(IEnumerable<Pawn> input)
-        {
-            return PlayerPawnsDisplayOrderUtility.InOrder(input);
-        }
+        // private IEnumerable<Pawn> LabelSortFunction(IEnumerable<Pawn> input)
+        // {
+        //     return PlayerPawnsDisplayOrderUtility.InOrder(input);
+        // }
 
-        private void RecachePawns()
-        {
-            this.cachedPawns.Clear();
-            this.cachedPawns.AddRange(
-                PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_FreeColonists.Where<Pawn>(
-                    (Func<Pawn, bool>)(pawn => !pawn.DevelopmentalStage.Baby())));
-            this.cachedPawns = this.LabelSortFunction((IEnumerable<Pawn>)this.cachedPawns).ToList<Pawn>();
-            if (this.sortByColumn != null)
-            {
-                if (this.sortDescending)
-                    this.cachedPawns.SortStable<Pawn>(new Func<Pawn, Pawn, int>(this.sortByColumn.Worker.Compare));
-                else
-                    this.cachedPawns.SortStable<Pawn>((Func<Pawn, Pawn, int>)((a, b) =>
-                        this.sortByColumn.Worker.Compare(b, a)));
-            }
-            // this.cachedPawns = this.PrimarySortFunction((IEnumerable<Pawn>) this.cachedPawns).ToList<Pawn>();
-        }
-
-        private void RecacheSize()
-        {
-            this.cachedSize = new Vector2(this.windowRect.width, HEIGHT * 2 + Y_BUFFER * 3);
-        }
-
-        private void RecacheRowHeights()
-        {
-            this.cachedRowHeights.Clear();
-            for (int index = 0; index < this.cachedPawns.Count; ++index)
-                this.cachedRowHeights.Add(this.CalculateRowHeight(this.cachedPawns[index]));
-        }
-
-        private void RecacheColumnWidths()
-        {
-            float totalAvailableSpaceForColumns = this.cachedSize.x - 16f;
-            float minWidthsSum = 0.0f;
-            this.cachedColumnWidths.Clear();
-            List<PawnColumnDef_AssignOutfit> columns = this.Columns;
-            for (int index = 0; index < columns.Count; ++index)
-            {
-                float minWidth = this.GetMinWidth(columns[index]);
-                this.cachedColumnWidths.Add(minWidth);
-                minWidthsSum += minWidth;
-            }
-        }
-
-        private float GetMinWidth(PawnColumnDef_AssignOutfit column)
-        {
-            return Mathf.Max((float)column.Worker.GetMinWidth(this), 0.0f);
-        }
-
-        private void RecacheLookTargets()
-        {
-            this.cachedLookTargets.Clear();
-            this.cachedLookTargets.AddRange(
-                this.cachedPawns.Select<Pawn, LookTargets>((Func<Pawn, LookTargets>)(p => new LookTargets((Thing)p))));
-        }
-
-        private float CalculateHeaderHeight()
-        {
-            float a = 0.0f;
-            List<PawnColumnDef_AssignOutfit> columns = this.Columns;
-            for (int index = 0; index < columns.Count; ++index)
-                a = Mathf.Max(a, (float)columns[index].Worker.GetMinHeaderHeight(this));
-            return a;
-        }
-
-        private float CalculateRowHeight(Pawn pawn)
-        {
-            float a = 0.0f;
-            List<PawnColumnDef_AssignOutfit> columns = this.Columns;
-            for (int index = 0; index < columns.Count; ++index)
-                a = Mathf.Max(a, (float)columns[index].Worker.GetMinCellHeight(pawn));
-            return a;
-        }
-
-        private float CalculateTotalRequiredHeight()
-        {
-            float headerHeight = this.CalculateHeaderHeight();
-            for (int index = 0; index < this.cachedPawns.Count; ++index)
-                headerHeight += this.CalculateRowHeight(this.cachedPawns[index]);
-            return headerHeight;
-        }
+        // private void RecachePawns()
+        // {
+        //     this.cachedPawns.Clear();
+        //     this.cachedPawns.AddRange(
+        //         PawnsFinder.AllMapsCaravansAndTravelingTransportPods_Alive_FreeColonists.Where<Pawn>(
+        //             (Func<Pawn, bool>)(pawn => !pawn.DevelopmentalStage.Baby())));
+        //     this.cachedPawns = this.LabelSortFunction((IEnumerable<Pawn>)this.cachedPawns).ToList<Pawn>();
+        //     if (this.sortByColumn != null)
+        //     {
+        //         if (this.sortDescending)
+        //             this.cachedPawns.SortStable<Pawn>(new Func<Pawn, Pawn, int>(this.sortByColumn.Worker.Compare));
+        //         else
+        //             this.cachedPawns.SortStable<Pawn>((Func<Pawn, Pawn, int>)((a, b) =>
+        //                 this.sortByColumn.Worker.Compare(b, a)));
+        //     }
+        //     // this.cachedPawns = this.PrimarySortFunction((IEnumerable<Pawn>) this.cachedPawns).ToList<Pawn>();
+        // }
+        //
+        // private void RecacheSize()
+        // {
+        //     this.cachedSize = new Vector2(this.windowRect.width, HEIGHT * 2 + Y_BUFFER * 3);
+        // }
+        //
+        // private void RecacheRowHeights()
+        // {
+        //     this.cachedRowHeights.Clear();
+        //     for (int index = 0; index < this.cachedPawns.Count; ++index)
+        //         this.cachedRowHeights.Add(this.CalculateRowHeight(this.cachedPawns[index]));
+        // }
+        //
+        // private void RecacheColumnWidths()
+        // {
+        //     float totalAvailableSpaceForColumns = this.cachedSize.x - 16f;
+        //     float minWidthsSum = 0.0f;
+        //     this.cachedColumnWidths.Clear();
+        //     List<PawnColumnDef_AssignOutfit> columns = this.Columns;
+        //     for (int index = 0; index < columns.Count; ++index)
+        //     {
+        //         float minWidth = this.GetMinWidth(columns[index]);
+        //         this.cachedColumnWidths.Add(minWidth);
+        //         minWidthsSum += minWidth;
+        //     }
+        // }
+        //
+        // private float GetMinWidth(PawnColumnDef_AssignOutfit column)
+        // {
+        //     return Mathf.Max((float)column.Worker.GetMinWidth(this), 0.0f);
+        // }
+        //
+        // private void RecacheLookTargets()
+        // {
+        //     this.cachedLookTargets.Clear();
+        //     this.cachedLookTargets.AddRange(
+        //         this.cachedPawns.Select<Pawn, LookTargets>((Func<Pawn, LookTargets>)(p => new LookTargets((Thing)p))));
+        // }
+        //
+        // private float CalculateHeaderHeight()
+        // {
+        //     float a = 0.0f;
+        //     List<PawnColumnDef_AssignOutfit> columns = this.Columns;
+        //     for (int index = 0; index < columns.Count; ++index)
+        //         a = Mathf.Max(a, (float)columns[index].Worker.GetMinHeaderHeight(this));
+        //     return a;
+        // }
+        //
+        // private float CalculateRowHeight(Pawn pawn)
+        // {
+        //     float a = 0.0f;
+        //     List<PawnColumnDef_AssignOutfit> columns = this.Columns;
+        //     for (int index = 0; index < columns.Count; ++index)
+        //         a = Mathf.Max(a, (float)columns[index].Worker.GetMinCellHeight(pawn));
+        //     return a;
+        // }
+        //
+        // private float CalculateTotalRequiredHeight()
+        // {
+        //     float headerHeight = this.CalculateHeaderHeight();
+        //     for (int index = 0; index < this.cachedPawns.Count; ++index)
+        //         headerHeight += this.CalculateRowHeight(this.cachedPawns[index]);
+        //     return headerHeight;
+        // }
     }
-    
 }

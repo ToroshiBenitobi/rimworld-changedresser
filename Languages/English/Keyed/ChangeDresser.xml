@@ -32,6 +32,7 @@
 	<ChangeDresser.UseDresserToDressFromDesc>Allows pawns to remove apparel from this dresser (disable on dump dressers to improve performance)</ChangeDresser.UseDresserToDressFromDesc>
 	<ChangeDresser.UseDresser>Use Dresser</ChangeDresser.UseDresser>
 	<ChangeDresser.RenameLabel>Rename Dresser</ChangeDresser.RenameLabel>
+	<ChangeDresser.FindMissingApparel>Find Missing Apparel</ChangeDresser.FindMissingApparel>
 	
 	<!-- Common Strings -->
 	<ChangeDresser.Worn>Worn</ChangeDresser.Worn>
